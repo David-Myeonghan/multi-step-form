@@ -4,6 +4,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import '@/styles/globals.css';
+import Layout from '@/components/Layout';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -15,7 +16,9 @@ export default function App({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <Component {...pageProps} />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
       </LocalizationProvider>
     </>
   );

@@ -1,10 +1,57 @@
-import { Stack, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers';
 
 export default function Home() {
   return (
     <>
       <Stack>
-        <Typography>📚 도서 기본 정보</Typography>
+        <Box>
+          <Typography variant="h5">📚 도서 기본 정보</Typography>
+          <Typography variant="subtitle1">Step 1 / 5</Typography>
+          <Typography variant="subtitle1">도서 기본 정보를 입력해주세요.</Typography>
+        </Box>
+        <Box>
+          <TextField sx={{ width: '100%' }} label="책 제목" />
+          <TextField sx={{ width: '100%' }} label="저자" />
+        </Box>
+        <Box>
+          <Typography>독서 상태</Typography>
+          <FormControl>
+            <FormLabel id="demo-row-radio-buttons-group-label">Gender</FormLabel>
+            <RadioGroup
+              row
+              aria-labelledby="demo-row-radio-buttons-group-label"
+              name="row-radio-buttons-group"
+            >
+              <FormControlLabel value="female" control={<Radio />} label="Female" />
+              <FormControlLabel value="male" control={<Radio />} label="Male" />
+              <FormControlLabel value="other" control={<Radio />} label="Other" />
+              <FormControlLabel value="disabled" disabled control={<Radio />} label="other" />
+            </RadioGroup>
+          </FormControl>
+        </Box>
+        <Stack>
+          <Typography>독서 시작일</Typography>
+          <DatePicker />
+          <Typography>독서 종료일</Typography>
+          <DatePicker />
+
+        </Stack>
+        <Stack direction='row' sx={{width: '100%'}}>
+          <Button>이전</Button>
+          <Button>다음 -></Button>
+        </Stack>
       </Stack>
     </>
   );
