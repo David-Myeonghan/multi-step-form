@@ -1,7 +1,11 @@
+import { Stack, Typography } from '@mui/material';
+
 export default function Home() {
   return (
     <>
-      <div>Next app</div>
+      <Stack>
+        <Typography>📚 도서 기본 정보</Typography>
+      </Stack>
     </>
   );
 }
