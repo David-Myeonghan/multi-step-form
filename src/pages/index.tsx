@@ -1,12 +1,11 @@
 import { Box, Paper, Stack, Typography } from '@mui/material';
 import React, { useEffect, useState, FC } from 'react';
 import { useRouter } from 'next/router';
-import BasicInfo, { StepComponentCommonProps } from '@/components/BasicInfo';
-import Recommendation from '@/components/Recommendation';
-import Review from '@/components/Review';
-import Quotation from '@/components/Quotation';
-import SharingOption from '@/components/SharingOption';
-
+import BasicInfo, { StepComponentCommonProps } from '@/steps/BasicInfo';
+import Recommendation from '@/steps/Recommendation';
+import Review from '@/steps/Review';
+import Quotation from '@/steps/Quotation';
+import SharingOption from '@/steps/SharingOption';
 // 1024px 기준
 
 type StepName = 'BasicInfo' | 'Recommendation' | 'Review' | 'Quotation' | 'SharingOption';
@@ -51,7 +50,6 @@ export default function Home() {
 
   const goToPreviousStep = () => {
     const previousStep = STEP_LIST[currentStepIndex - 1];
-
     if (previousStep === undefined) {
       return;
     }
@@ -91,13 +89,13 @@ export default function Home() {
     <>
       <Paper elevation={3} sx={{ p: 3 }}>
         <Stack gap={3}>
-          {/* Title */}
+          {/* Title - TODO: object 로 */}
           <Box>
             <Typography variant="h5">📚 도서 기본 정보</Typography>
             <Typography variant="subtitle1">Step {currentStep.step} / 5</Typography>
             <Typography variant="subtitle1">도서 기본 정보를 입력해주세요.</Typography>
           </Box>
-          {/* Step = 1 */}
+          {/* Step */}
           <StepComponent onNext={goToNextStep} onPrevious={goToPreviousStep} />
         </Stack>
       </Paper>

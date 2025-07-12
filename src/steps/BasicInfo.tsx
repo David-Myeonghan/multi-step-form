@@ -1,0 +1,174 @@
+import {
+  Box,
+  Button,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
+  Stack,
+  TextField,
+} from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers';
+import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { BasicInfoFormValues, basicInfoSchema } from '@/schemas/BasicInfoSchema';
+
+const READING_STATUS = [
+  { label: '읽고 싶은 책', value: 'WISHLIST' },
+  { label: '읽는 중', value: 'READING' },
+  { label: '읽음', value: 'COMPLETED' },
+  { label: '보류 중', value: 'PAUSED' },
+];
+
+export interface StepComponentCommonProps {
+  onNext: () => void;
+  onPrevious: () => void;
+}
+export default function BasicInfo({ onNext, onPrevious }: StepComponentCommonProps) {
+  const form = useForm<BasicInfoFormValues>({
+    defaultValues: {
+      title: '',
+      author: '',
+      readingStatus: 'WISHLIST',
+      publishedAt: null,
+      readingStartedAt: null,
+      readingFinishedAt: null,
+    },
+    resolver: zodResolver(basicInfoSchema),
+  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    control,
+  } = form;
+
+  const handleNextClick = (data: any) => {
+    console.log(data);
+    console.log('next');
+    // if ok,
+    onNext();
+  };
+  const handlePreviousClick = () => {
+    onPrevious();
+  };
+  console.log(errors);
+
+  return (
+    <form onSubmit={handleSubmit(handleNextClick)}>
+      <Stack gap={2}>
+        <Box>
+          <Stack gap={2}>
+            <Box>
+              <TextField
+                sx={{ width: '100%' }}
+                label="책 제목"
+                {...register('title')}
+                error={!!errors.title}
+                helperText={errors.title?.message}
+              />
+            </Box>
+            <Stack direction="row" gap={2}>
+              <TextField
+                sx={{ width: '100%' }}
+                label="저자"
+                {...register('author')}
+                error={!!errors.author}
+                helperText={errors.author?.message}
+              />
+              <Controller
+                name="publishedAt"
+                control={control}
+                render={({ field, fieldState }) => {
+                  console.log(field);
+                  console.log(fieldState);
+                  return (
+                    <DatePicker
+                      label="도서 출판일"
+                      {...field}
+                      sx={{ width: '100%' }}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          error: !!fieldState.error,
+                          helperText: fieldState.error?.message,
+                        },
+                      }}
+                    />
+                  );
+                }}
+              />
+            </Stack>
+          </Stack>
+        </Box>
+
+        {/* Reading Status */}
+        <Box>
+          <FormControl error={!!errors.readingStatus}>
+            <FormLabel id="radio-buttons-reading-status-label">독서 상태</FormLabel>
+            <Controller
+              name={'readingStatus'}
+              control={control}
+              render={({ field }) => (
+                <RadioGroup row {...field}>
+                  {READING_STATUS.map(({ label, value }) => (
+                    <FormControlLabel key={value} value={value} control={<Radio />} label={label} />
+                  ))}
+                </RadioGroup>
+              )}
+            />
+          </FormControl>
+        </Box>
+        {/* Start/End date */}
+        <Stack direction="row" justifyContent="space-between" gap={2}>
+          <Controller
+            name="readingStartedAt"
+            control={control}
+            render={({ field, fieldState }) => (
+              <DatePicker
+                label="독서 시작일"
+                {...field}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    error: !!fieldState.error,
+                    helperText: fieldState.error?.message,
+                  },
+                }}
+              />
+            )}
+          />
+          <Controller
+            name="readingFinishedAt"
+            control={control}
+            render={({ field, fieldState }) => (
+              <DatePicker
+                label="독서 종료일"
+                {...field}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    error: !!fieldState.error,
+                    helperText: fieldState.error?.message,
+                  },
+                }}
+              />
+            )}
+          />
+        </Stack>
+
+        {/* TODO: Actions - 컴포넌트로 이동 */}
+        <Stack direction="row" justifyContent="space-between" sx={{ width: '100%', paddingTop: 3 }}>
+          {/* TODO: conditional rendering 조건 추가 - step === 1 */}
+          <Button onClick={handlePreviousClick} variant="contained">
+            ⬅ 이전
+          </Button>
+          <Button type="submit" variant="contained">
+            다음 ➡
+          </Button>
+        </Stack>
+      </Stack>
+    </form>
+  );
+}
