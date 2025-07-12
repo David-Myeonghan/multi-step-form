@@ -13,8 +13,8 @@ import {
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
 import { useRouter } from 'next/router';
+import { useForm } from 'react-hook-form';
 
 const READING_STATUS = [
   { label: '읽고 싶은 책', value: 'WISHLIST' },
@@ -23,9 +23,12 @@ const READING_STATUS = [
   { label: '보류 중', value: 'PAUSED' },
 ];
 
+// 1024px 기준
 export default function Home() {
   const router = useRouter();
   const [step, setStep] = useState(1);
+
+  const form = useForm();
 
   useEffect(() => {
     if (router.isReady === false) {
@@ -50,17 +53,23 @@ export default function Home() {
           {/* Title */}
           <Box>
             <Typography variant="h5">📚 도서 기본 정보</Typography>
-            <Typography variant="subtitle1">Step 1 / 5</Typography>
+            <Typography variant="subtitle1">Step {step} / 5</Typography>
+            <Typography variant="subtitle1">도서 기본 정보를 입력해주세요.</Typography>
           </Box>
           {/* Basic Info */}
           <Box>
-            <Typography variant="subtitle1">도서 기본 정보를 입력해주세요.</Typography>
-            <TextField sx={{ width: '100%' }} label="책 제목" />
-            <TextField sx={{ width: '100%' }} label="저자" />
+            <Stack gap={2}>
+              <Box>
+                <TextField sx={{ width: '100%' }} label="책 제목" />
+              </Box>
+              <Stack direction="row" gap={2}>
+                <TextField sx={{ width: '100%' }} label="저자" />
+                <DatePicker label="도서 출판일" sx={{ width: '100%' }} />
+              </Stack>
+            </Stack>
           </Box>
           {/* Reading Status */}
           <Box>
-            {/*<Typography>독서 상태</Typography>*/}
             <FormControl>
               <FormLabel id="radio-buttons-reading-status-label">독서 상태</FormLabel>
               <RadioGroup
@@ -75,16 +84,14 @@ export default function Home() {
             </FormControl>
           </Box>
           {/* Start/End date */}
-          <Stack>
-            <Typography>독서 시작일</Typography>
-            <DatePicker />
-            <Typography>독서 종료일</Typography>
-            <DatePicker />
+          <Stack direction="row" justifyContent="space-between" gap={2}>
+            <DatePicker label="독서 시작일" sx={{ width: '100%' }} />
+            <DatePicker label="독서 종료일" sx={{ width: '100%' }} />
           </Stack>
           {/* Actions */}
-          <Stack direction="row" sx={{ width: '100%' }}>
-            <Button>이전</Button>
-            <Button>다음 ➡</Button>
+          <Stack direction="row" justifyContent="space-between" sx={{ width: '100%' }}>
+            <Button variant="contained">이전</Button>
+            <Button variant="contained">다음 ➡</Button>
           </Stack>
         </Stack>
       </Paper>
