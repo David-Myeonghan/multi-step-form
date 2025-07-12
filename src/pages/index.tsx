@@ -1,5 +1,5 @@
 import { Box, Paper, Stack, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, FC } from 'react';
 import { useRouter } from 'next/router';
 import BasicInfo, { StepComponentCommonProps } from '@/components/BasicInfo';
 import Recommendation from '@/components/Recommendation';
