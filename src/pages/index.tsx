@@ -15,20 +15,35 @@ import { DatePicker } from '@mui/x-date-pickers';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
-
-const READING_STATUS = [
-  { label: '읽고 싶은 책', value: 'WISHLIST' },
-  { label: '읽는 중', value: 'READING' },
-  { label: '읽음', value: 'COMPLETED' },
-  { label: '보류 중', value: 'PAUSED' },
-];
-
+import BasicInfo from '@/components/BasicInfo';
 // 1024px 기준
+
+type StepName = 'BasicInfo' | 'Recommendation' | 'Review' | 'Quotation' | 'SharingOption';
+type StepType = { step: number; name: StepName };
+
+const STEP_LIST: Array<StepType> = [
+  { step: 1, name: 'BasicInfo' },
+  { step: 2, name: 'Recommendation' },
+  { step: 3, name: 'Review' },
+  { step: 4, name: 'Quotation' },
+  { step: 5, name: 'SharingOption' },
+];
 export default function Home() {
   const router = useRouter();
-  const [step, setStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState<StepType>(STEP_LIST[0]);
 
-  const form = useForm();
+  const goToNextStep = (newStep: number) => {
+    // setCurrentStep({ step: 2, name: 'Recommendation' });
+    router.push(
+      // ,or replace
+      {
+        pathname: router.pathname,
+        query: { ...router.query, step: newStep },
+      },
+      undefined,
+      { shallow: true },
+    );
+  };
 
   useEffect(() => {
     if (router.isReady === false) {
@@ -38,7 +53,7 @@ export default function Home() {
       router.replace(
         {
           pathname: router.pathname,
-          query: { ...router.query, step },
+          query: { ...router.query, step: currentStep.name },
         },
         undefined,
         { shallow: true },
@@ -53,46 +68,11 @@ export default function Home() {
           {/* Title */}
           <Box>
             <Typography variant="h5">📚 도서 기본 정보</Typography>
-            <Typography variant="subtitle1">Step {step} / 5</Typography>
+            <Typography variant="subtitle1">Step {currentStep.step} / 5</Typography>
             <Typography variant="subtitle1">도서 기본 정보를 입력해주세요.</Typography>
           </Box>
-          {/* Basic Info */}
-          <Box>
-            <Stack gap={2}>
-              <Box>
-                <TextField sx={{ width: '100%' }} label="책 제목" />
-              </Box>
-              <Stack direction="row" gap={2}>
-                <TextField sx={{ width: '100%' }} label="저자" />
-                <DatePicker label="도서 출판일" sx={{ width: '100%' }} />
-              </Stack>
-            </Stack>
-          </Box>
-          {/* Reading Status */}
-          <Box>
-            <FormControl>
-              <FormLabel id="radio-buttons-reading-status-label">독서 상태</FormLabel>
-              <RadioGroup
-                row
-                aria-labelledby="radio-buttons-reading-status-label"
-                name="reading-status"
-              >
-                {READING_STATUS.map(({ label, value }) => (
-                  <FormControlLabel key={value} value={value} control={<Radio />} label={label} />
-                ))}
-              </RadioGroup>
-            </FormControl>
-          </Box>
-          {/* Start/End date */}
-          <Stack direction="row" justifyContent="space-between" gap={2}>
-            <DatePicker label="독서 시작일" sx={{ width: '100%' }} />
-            <DatePicker label="독서 종료일" sx={{ width: '100%' }} />
-          </Stack>
-          {/* Actions */}
-          <Stack direction="row" justifyContent="space-between" sx={{ width: '100%' }}>
-            <Button variant="contained">이전</Button>
-            <Button variant="contained">다음 ➡</Button>
-          </Stack>
+          {/* Step = 1 */}
+          <BasicInfo onNext={() => setCurrentStep({ step: 2, name: 'Recommendation' })} />
         </Stack>
       </Paper>
     </>
@@ -104,3 +84,6 @@ export default function Home() {
 // 독서 상태
 // --> 읽고 싶은 책 / 읽는 중 / 읽음 / 보류중
 // --> 독서(할) 시작일, 독서 종료일 (독서 상태에 종속적)
+
+// todo:
+// how to step(1-5) -> validation -> 각 단계 UI
