@@ -19,17 +19,21 @@ const READING_STATUS = [
   { label: '보류 중', value: 'PAUSED' },
 ];
 
-interface BasicInfoProps {
+export interface StepComponentCommonProps {
   onNext: () => void;
+  onPrevious: () => void;
 }
-export default function BasicInfo({ onNext }: BasicInfoProps) {
+export default function BasicInfo({ onNext, onPrevious }: StepComponentCommonProps) {
   const form = useForm();
   const { handleSubmit } = form;
 
   const handleNextClick = () => {
     console.log('next');
     // if ok,
-    onNext()
+    onNext();
+  };
+  const handlePreviousClick = () => {
+    onPrevious();
   };
 
   return (
@@ -69,7 +73,9 @@ export default function BasicInfo({ onNext }: BasicInfoProps) {
 
         {/* Actions */}
         <Stack direction="row" justifyContent="space-between" sx={{ width: '100%', paddingTop: 3 }}>
-          <Button variant="contained">이전</Button>
+          <Button onClick={handlePreviousClick} variant="contained">
+            이전
+          </Button>
           <Button onClick={handleNextClick} variant="contained">
             다음 ➡
           </Button>

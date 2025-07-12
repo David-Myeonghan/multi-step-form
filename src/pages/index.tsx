@@ -1,21 +1,12 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Paper,
-  Radio,
-  RadioGroup,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers';
-import { useEffect, useState } from 'react';
+import { Box, Paper, Stack, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { useForm } from 'react-hook-form';
-import BasicInfo from '@/components/BasicInfo';
+import BasicInfo, { StepComponentCommonProps } from '@/components/BasicInfo';
+import Recommendation from '@/components/Recommendation';
+import Review from '@/components/Review';
+import Quotation from '@/components/Quotation';
+import SharingOption from '@/components/SharingOption';
+
 // 1024px 기준
 
 type StepName = 'BasicInfo' | 'Recommendation' | 'Review' | 'Quotation' | 'SharingOption';
@@ -28,27 +19,62 @@ const STEP_LIST: Array<StepType> = [
   { step: 4, name: 'Quotation' },
   { step: 5, name: 'SharingOption' },
 ];
+const StepComponentMap: Record<StepName, FC<StepComponentCommonProps>> = {
+  BasicInfo: BasicInfo,
+  Recommendation: Recommendation,
+  Review: Review,
+  Quotation: Quotation,
+  SharingOption: SharingOption,
+};
 export default function Home() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<StepType>(STEP_LIST[0]);
+  const currentStepIndex = STEP_LIST.findIndex(step => step.name === currentStep.name);
 
-  const goToNextStep = (newStep: number) => {
-    // setCurrentStep({ step: 2, name: 'Recommendation' });
+  const goToNextStep = () => {
+    const nextStep = STEP_LIST[currentStepIndex + 1];
+
+    if (nextStep === undefined) {
+      return;
+    }
+
+    setCurrentStep(nextStep);
     router.push(
-      // ,or replace
       {
         pathname: router.pathname,
-        query: { ...router.query, step: newStep },
+        query: { ...router.query, step: nextStep.step },
       },
       undefined,
       { shallow: true },
     );
   };
 
+  const goToPreviousStep = () => {
+    const previousStep = STEP_LIST[currentStepIndex - 1];
+
+    if (previousStep === undefined) {
+      return;
+    }
+
+    setCurrentStep(previousStep);
+
+    router.push(
+      {
+        pathname: router.pathname,
+        query: { ...router.query, step: previousStep.step },
+      },
+      undefined,
+      { shallow: true },
+    );
+  };
+
+  const StepComponent = StepComponentMap[currentStep.name];
+
   useEffect(() => {
     if (router.isReady === false) {
       return;
     }
+    // 1로 초기화, or 현재 스텝으로 초기화?
     if (!router.query.step) {
       router.replace(
         {
@@ -72,7 +98,7 @@ export default function Home() {
             <Typography variant="subtitle1">도서 기본 정보를 입력해주세요.</Typography>
           </Box>
           {/* Step = 1 */}
-          <BasicInfo onNext={() => setCurrentStep({ step: 2, name: 'Recommendation' })} />
+          <StepComponent onNext={goToNextStep} onPrevious={goToPreviousStep} />
         </Stack>
       </Paper>
     </>
