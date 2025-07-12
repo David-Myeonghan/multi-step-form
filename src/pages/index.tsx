@@ -12,8 +12,37 @@ import {
   Typography,
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import { useRouter } from 'next/router';
+
+const READING_STATUS = [
+  { label: '읽고 싶은 책', value: 'WISHLIST' },
+  { label: '읽는 중', value: 'READING' },
+  { label: '읽음', value: 'COMPLETED' },
+  { label: '보류 중', value: 'PAUSED' },
+];
 
 export default function Home() {
+  const router = useRouter();
+  const [step, setStep] = useState(1);
+
+  useEffect(() => {
+    if (router.isReady === false) {
+      return;
+    }
+    if (!router.query.step) {
+      router.replace(
+        {
+          pathname: router.pathname,
+          query: { ...router.query, step },
+        },
+        undefined,
+        { shallow: true },
+      );
+    }
+  }, [router.isReady]);
+
   return (
     <>
       <Paper elevation={3} sx={{ p: 3 }}>
@@ -33,16 +62,15 @@ export default function Home() {
           <Box>
             {/*<Typography>독서 상태</Typography>*/}
             <FormControl>
-              <FormLabel id="demo-row-radio-buttons-group-label">독서 상태</FormLabel>
+              <FormLabel id="radio-buttons-reading-status-label">독서 상태</FormLabel>
               <RadioGroup
                 row
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                name="row-radio-buttons-group"
+                aria-labelledby="radio-buttons-reading-status-label"
+                name="reading-status"
               >
-                <FormControlLabel value="female" control={<Radio />} label="읽고싶은 책" />
-                <FormControlLabel value="male" control={<Radio />} label="읽는 중" />
-                <FormControlLabel value="other" control={<Radio />} label="읽음" />
-                <FormControlLabel value="disabled" control={<Radio />} label="보류 중" />
+                {READING_STATUS.map(({ label, value }) => (
+                  <FormControlLabel key={value} value={value} control={<Radio />} label={label} />
+                ))}
               </RadioGroup>
             </FormControl>
           </Box>
