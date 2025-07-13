@@ -72,12 +72,29 @@ export default function Home() {
     if (router.isReady === false) {
       return;
     }
-    // 1로 초기화, or 현재 스텝으로 초기화?
+
+    if (router.query.step) {
+      const queryStep = +router.query.step;
+      const queryStepIndex = STEP_LIST.findIndex(step => step.step === queryStep);
+      if (queryStepIndex === -1) {
+        setCurrentStep(STEP_LIST[0]);
+        router.replace(
+          {
+            pathname: router.pathname,
+            query: { ...router.query, step: 1 },
+          },
+          undefined,
+          { shallow: true },
+        );
+        return;
+      }
+      setCurrentStep(STEP_LIST[queryStepIndex]);
+    }
     if (!router.query.step) {
       router.replace(
         {
           pathname: router.pathname,
-          query: { ...router.query, step: currentStep.name },
+          query: { ...router.query, step: currentStep.step },
         },
         undefined,
         { shallow: true },
@@ -89,7 +106,7 @@ export default function Home() {
     <>
       <Paper elevation={3} sx={{ p: 3 }}>
         <Stack gap={3}>
-          {/* Title - TODO: object 로 */}
+          {/* Title - TODO: object 이용해서 컴포넌트화 */}
           <Box>
             <Typography variant="h5">📚 도서 기본 정보</Typography>
             <Typography variant="subtitle1">Step {currentStep.step} / 5</Typography>
