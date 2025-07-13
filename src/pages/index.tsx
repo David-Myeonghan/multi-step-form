@@ -69,27 +69,21 @@ export default function Home() {
   const StepComponent = StepComponentMap[currentStep.name];
 
   useEffect(() => {
-    if (router.isReady === false) {
+    if (router.isReady === false) return;
+
+    const rawStep = Array.isArray(router.query.step) ? router.query.step[0] : router.query.step;
+    const queryStep = Number(rawStep) || 1;
+    const queryStepIndex = STEP_LIST.findIndex(step => step.step === queryStep);
+
+    if (queryStepIndex === -1) {
+      // invalid step
+      router.replace({ pathname: router.pathname, query: { step: 1 } }, undefined, {
+        shallow: true,
+      });
       return;
     }
+    setCurrentStep(STEP_LIST[queryStepIndex]);
 
-    if (router.query.step) {
-      const queryStep = +router.query.step;
-      const queryStepIndex = STEP_LIST.findIndex(step => step.step === queryStep);
-      if (queryStepIndex === -1) {
-        setCurrentStep(STEP_LIST[0]);
-        router.replace(
-          {
-            pathname: router.pathname,
-            query: { ...router.query, step: 1 },
-          },
-          undefined,
-          { shallow: true },
-        );
-        return;
-      }
-      setCurrentStep(STEP_LIST[queryStepIndex]);
-    }
     if (!router.query.step) {
       router.replace(
         {
@@ -100,7 +94,11 @@ export default function Home() {
         { shallow: true },
       );
     }
-  }, [router.isReady]);
+  }, [router.isReady, router.query.step]);
+
+  if (router.isReady === false || !router.query.step) {
+    return null;
+  }
 
   return (
     <>
