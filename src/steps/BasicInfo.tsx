@@ -10,41 +10,59 @@ import {
   TextField,
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { BasicInfoFormValues, basicInfoSchema } from '@/schemas/BasicInfoSchema';
+import { useEffect } from 'react';
 
 const READING_STATUS = [
   { label: '읽고 싶은 책', value: 'WISHLIST' },
   { label: '읽는 중', value: 'READING' },
   { label: '읽음', value: 'COMPLETED' },
   { label: '보류 중', value: 'PAUSED' },
-];
+] as const;
+
+const dateFieldConfig: Record<
+  BasicInfoFormValues['readingStatus'],
+  Array<{ label: string; name: 'publishedAt' | 'readingStartedAt' | 'readingFinishedAt' }>
+> = {
+  WISHLIST: [],
+  READING: [{ label: '독서 시작일', name: 'readingStartedAt' }],
+  PAUSED: [{ label: '독서 시작일', name: 'readingStartedAt' }],
+  COMPLETED: [
+    { label: '독서 시작일', name: 'readingStartedAt' },
+    { label: '독서 종료일', name: 'readingFinishedAt' },
+  ],
+};
 
 export interface StepComponentCommonProps {
   onNext: () => void;
   onPrevious: () => void;
 }
 export default function BasicInfo({ onNext, onPrevious }: StepComponentCommonProps) {
-  const form = useForm<BasicInfoFormValues>({
+  const {
+    register,
+    unregister,
+    handleSubmit,
+    formState: { errors, validatingFields },
+    control,
+  } = useForm<BasicInfoFormValues>({
     defaultValues: {
-      title: '',
-      author: '',
+      title: 'hello',
+      author: 'hello',
       readingStatus: 'WISHLIST',
       publishedAt: null,
       readingStartedAt: null,
       readingFinishedAt: null,
     },
+    shouldUnregister: true,
     resolver: zodResolver(basicInfoSchema),
   });
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    control,
-  } = form;
 
-  const handleNextClick = (data: any) => {
+  const readingStatus = useWatch({ control, name: 'readingStatus' });
+
+  console.log(validatingFields);
+  const handleNextClick = (data: BasicInfoFormValues) => {
     console.log(data);
     console.log('next');
     // if ok,
@@ -53,7 +71,6 @@ export default function BasicInfo({ onNext, onPrevious }: StepComponentCommonPro
   const handlePreviousClick = () => {
     onPrevious();
   };
-  console.log(errors);
 
   return (
     <form onSubmit={handleSubmit(handleNextClick)}>
@@ -80,24 +97,20 @@ export default function BasicInfo({ onNext, onPrevious }: StepComponentCommonPro
               <Controller
                 name="publishedAt"
                 control={control}
-                render={({ field, fieldState }) => {
-                  console.log(field);
-                  console.log(fieldState);
-                  return (
-                    <DatePicker
-                      label="도서 출판일"
-                      {...field}
-                      sx={{ width: '100%' }}
-                      slotProps={{
-                        textField: {
-                          fullWidth: true,
-                          error: !!fieldState.error,
-                          helperText: fieldState.error?.message,
-                        },
-                      }}
-                    />
-                  );
-                }}
+                render={({ field, fieldState }) => (
+                  <DatePicker
+                    label="도서 출판일"
+                    {...field}
+                    sx={{ width: '100%' }}
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                        error: !!fieldState.error,
+                        helperText: fieldState.error?.message,
+                      },
+                    }}
+                  />
+                )}
               />
             </Stack>
           </Stack>
@@ -120,42 +133,69 @@ export default function BasicInfo({ onNext, onPrevious }: StepComponentCommonPro
             />
           </FormControl>
         </Box>
+
         {/* Start/End date */}
         <Stack direction="row" justifyContent="space-between" gap={2}>
-          <Controller
-            name="readingStartedAt"
-            control={control}
-            render={({ field, fieldState }) => (
-              <DatePicker
-                label="독서 시작일"
-                {...field}
-                slotProps={{
-                  textField: {
-                    fullWidth: true,
-                    error: !!fieldState.error,
-                    helperText: fieldState.error?.message,
-                  },
-                }}
-              />
-            )}
-          />
-          <Controller
-            name="readingFinishedAt"
-            control={control}
-            render={({ field, fieldState }) => (
-              <DatePicker
-                label="독서 종료일"
-                {...field}
-                slotProps={{
-                  textField: {
-                    fullWidth: true,
-                    error: !!fieldState.error,
-                    helperText: fieldState.error?.message,
-                  },
-                }}
-              />
-            )}
-          />
+          {dateFieldConfig[readingStatus].map(({ name, label }) => (
+            <Controller
+              key={name}
+              name={name}
+              control={control}
+              render={({ field, fieldState }) => (
+                <DatePicker
+                  label={label}
+                  {...field}
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                      error: !!fieldState.error,
+                      helperText: fieldState.error?.message,
+                    },
+                  }}
+                />
+              )}
+            />
+          ))}
+          {/*<Controller*/}
+          {/*  name="readingStartedAt"*/}
+          {/*  control={control}*/}
+          {/*  render={({ field, fieldState }) => (*/}
+          {/*    <DatePicker*/}
+          {/*      label="독서 시작일"*/}
+          {/*      disabled={readingStatus === 'WISHLIST'}*/}
+          {/*      {...field}*/}
+          {/*      slotProps={{*/}
+          {/*        textField: {*/}
+          {/*          fullWidth: true,*/}
+          {/*          error: !!fieldState.error,*/}
+          {/*          helperText: fieldState.error?.message,*/}
+          {/*        },*/}
+          {/*      }}*/}
+          {/*    />*/}
+          {/*  )}*/}
+          {/*/>*/}
+          {/*<Controller*/}
+          {/*  name="readingFinishedAt"*/}
+          {/*  control={control}*/}
+          {/*  render={({ field, fieldState }) => (*/}
+          {/*    <DatePicker*/}
+          {/*      label="독서 종료일"*/}
+          {/*      disabled={*/}
+          {/*        readingStatus === 'WISHLIST' ||*/}
+          {/*        readingStatus === 'READING' ||*/}
+          {/*        readingStatus === 'PAUSED'*/}
+          {/*      }*/}
+          {/*      {...field}*/}
+          {/*      slotProps={{*/}
+          {/*        textField: {*/}
+          {/*          fullWidth: true,*/}
+          {/*          error: !!fieldState.error,*/}
+          {/*          helperText: fieldState.error?.message,*/}
+          {/*        },*/}
+          {/*      }}*/}
+          {/*    />*/}
+          {/*  )}*/}
+          {/*/>*/}
         </Stack>
 
         {/* TODO: Actions - 컴포넌트로 이동 */}

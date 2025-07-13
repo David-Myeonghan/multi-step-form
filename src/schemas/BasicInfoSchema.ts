@@ -5,8 +5,8 @@ const ReadingStatus = z.enum(['WISHLIST', 'READING', 'COMPLETED', 'PAUSED'] as c
   message: '독서 상태를 선택해주세요.',
 });
 const DateField = z
-  .preprocess(val => (val ? dayjs(val as string) : null), z.any())
-  .refine((d): d is Dayjs => dayjs.isDayjs(d), {
+  .custom<Dayjs | null>(val => val === null || dayjs.isDayjs(val), {
+    // 실패할 때 에러메시지 발생. (null 이 아니거나, dayjs 값이 아닐 때)
     message: '유효한 날짜를 선택해주세요.',
   })
   .nullable();
@@ -16,18 +16,9 @@ export const basicInfoSchema = z
     title: z.string().nonempty({ message: '책 제목을 입력해주세요.' }),
     author: z.string().nonempty({ message: '책 저자를 입력해주세요.' }),
     readingStatus: ReadingStatus,
-    publishedAt: DateField.refine(date => date !== null, {
-      message: '출판일을 입력해주세요.',
-      path: ['publishedAt'],
-    }),
-    readingStartedAt: DateField.refine(d => d !== null, {
-      message: '독서 시작일은 필수입니다.',
-      path: ['readingStartedAt'],
-    }),
-    readingFinishedAt: DateField.refine(d => d !== null, {
-      message: '독서 종료일은 필수입니다.',
-      path: ['readingFinishedAt'],
-    }),
+    publishedAt: DateField,
+    readingStartedAt: DateField,
+    readingFinishedAt: DateField,
   })
   .refine(
     data =>
@@ -42,11 +33,19 @@ export const basicInfoSchema = z
       !data.readingStartedAt ||
       !data.readingFinishedAt ||
       data.readingStartedAt <= data.readingFinishedAt,
-
     {
+      // 위 조건이 false 일 때 에러 메시지 발생
       path: ['readingFinishedAt'],
       message: '독서 종료일은 시작일보다 같거나 이후여야 합니다.',
     },
-  );
+  )
+  .transform(data => {
+    if (data.readingStatus === 'WISHLIST') {
+      return { ...data, readingStartedAt: null, readingFinishedAt: null };
+    } else if (data.readingStatus === 'READING' || data.readingStatus === 'PAUSED') {
+      return { ...data, readingFinishedAt: null };
+    }
+    return data;
+  });
 
 export type BasicInfoFormValues = z.infer<typeof basicInfoSchema>;
