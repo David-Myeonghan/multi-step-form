@@ -13,6 +13,7 @@ import { DatePicker } from '@mui/x-date-pickers';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { BasicInfoFormValues, basicInfoSchema } from '@/schemas/BasicInfoSchema';
+import FormAction from '@/components/FormAction';
 
 const READING_STATUS = [
   { label: '읽고 싶은 책', value: 'WISHLIST' },
@@ -152,17 +153,7 @@ export default function BasicInfo({ onNext, onPrevious }: StepComponentCommonPro
             />
           ))}
         </Stack>
-
-        {/* TODO: Actions - 컴포넌트로 이동 */}
-        <Stack direction="row" justifyContent="space-between" sx={{ width: '100%', paddingTop: 3 }}>
-          {/* TODO: conditional rendering 조건 추가 - step === 1 */}
-          <Button onClick={handlePreviousClick} variant="contained">
-            ⬅ 이전
-          </Button>
-          <Button type="submit" variant="contained">
-            다음 ➡
-          </Button>
-        </Stack>
+        <FormAction onPreviousClick={handlePreviousClick} />
       </Stack>
     </form>
   );
