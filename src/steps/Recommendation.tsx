@@ -14,7 +14,7 @@ export default function Recommendation({ onNext, onPrevious }: StepComponentComm
   return (
     <form onSubmit={handleSubmit(handleNextClick)}>
       <Stack gap={2}>
-        <Box gap={2}>Review</Box>
+        <Box gap={2}>Recommendation</Box>
         <FormAction onPreviousClick={onPrevious} />
       </Stack>
     </form>

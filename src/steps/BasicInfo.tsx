@@ -14,6 +14,9 @@ import { Controller, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { BasicInfoFormValues, basicInfoSchema } from '@/schemas/BasicInfoSchema';
 import FormAction from '@/components/FormAction';
+import { basicInfoAtom } from '@/Atom/BasinInfo';
+import { useAtom } from 'jotai';
+import { useEffect } from 'react';
 
 const READING_STATUS = [
   { label: '읽고 싶은 책', value: 'WISHLIST' },
@@ -40,11 +43,13 @@ export interface StepComponentCommonProps {
   onPrevious: () => void;
 }
 export default function BasicInfo({ onNext, onPrevious }: StepComponentCommonProps) {
+  const [basicInfoStorage, setBasicInfo] = useAtom<>(basicInfoAtom);
   const {
     register,
     handleSubmit,
     formState: { errors },
     control,
+    reset,
   } = useForm<BasicInfoFormValues>({
     defaultValues: {
       title: '',
@@ -62,11 +67,22 @@ export default function BasicInfo({ onNext, onPrevious }: StepComponentCommonPro
   const handleNextClick = (data: BasicInfoFormValues) => {
     console.log(data);
     // if ok,
+    setBasicInfo(data);
     onNext();
   };
   const handlePreviousClick = () => {
     onPrevious();
   };
+
+  useEffect(() => {
+    if (
+      typeof basicInfoStorage === 'object' &&
+      basicInfoStorage !== null &&
+      Object.keys(basicInfoStorage).length > 0
+    ) {
+      reset(basicInfoStorage);
+    }
+  }, []);
 
   return (
     <form onSubmit={handleSubmit(handleNextClick)}>

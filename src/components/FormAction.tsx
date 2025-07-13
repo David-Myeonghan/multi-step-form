@@ -3,13 +3,15 @@ import { useRouter } from 'next/router';
 
 interface FormActionProps {
   onPreviousClick: () => void;
+  // queryStep: number
 }
 export default function FormAction({ onPreviousClick }: FormActionProps) {
-  const { query } = useRouter();
-  const step = +query.step as number;
+  const { query, isReady } = useRouter();
+  const rawStep = Array.isArray(query.step) ? query.step[0] : query.step;
+  const queryStep = Number(rawStep) || 1;
 
-  if (!step) {
-    return null;
+  if (isReady === false || !queryStep) {
+    return null; // Loading
   }
 
   return (
@@ -19,7 +21,7 @@ export default function FormAction({ onPreviousClick }: FormActionProps) {
       sx={{ width: '100%', paddingTop: 3, position: 'relative' }}
       gap={2}
     >
-      {step !== 1 && (
+      {queryStep !== 1 && (
         <Button
           onClick={onPreviousClick}
           variant="contained"
@@ -29,7 +31,7 @@ export default function FormAction({ onPreviousClick }: FormActionProps) {
         </Button>
       )}
       <Button type="submit" variant="contained" sx={{ position: 'absolute', bottom: 0, right: 0 }}>
-        {step === 5 ? '제출' : `다음 ➡`}
+        {queryStep === 5 ? '제출' : `다음 ➡`}
       </Button>
     </Stack>
   );
