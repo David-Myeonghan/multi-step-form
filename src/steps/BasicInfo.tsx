@@ -13,7 +13,6 @@ import { DatePicker } from '@mui/x-date-pickers';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { BasicInfoFormValues, basicInfoSchema } from '@/schemas/BasicInfoSchema';
-import { useEffect } from 'react';
 
 const READING_STATUS = [
   { label: '읽고 싶은 책', value: 'WISHLIST' },
@@ -42,14 +41,13 @@ export interface StepComponentCommonProps {
 export default function BasicInfo({ onNext, onPrevious }: StepComponentCommonProps) {
   const {
     register,
-    unregister,
     handleSubmit,
-    formState: { errors, validatingFields },
+    formState: { errors },
     control,
   } = useForm<BasicInfoFormValues>({
     defaultValues: {
-      title: 'hello',
-      author: 'hello',
+      title: '',
+      author: '',
       readingStatus: 'WISHLIST',
       publishedAt: null,
       readingStartedAt: null,
@@ -58,13 +56,10 @@ export default function BasicInfo({ onNext, onPrevious }: StepComponentCommonPro
     shouldUnregister: true,
     resolver: zodResolver(basicInfoSchema),
   });
-
   const readingStatus = useWatch({ control, name: 'readingStatus' });
 
-  console.log(validatingFields);
   const handleNextClick = (data: BasicInfoFormValues) => {
     console.log(data);
-    console.log('next');
     // if ok,
     onNext();
   };
@@ -156,46 +151,6 @@ export default function BasicInfo({ onNext, onPrevious }: StepComponentCommonPro
               )}
             />
           ))}
-          {/*<Controller*/}
-          {/*  name="readingStartedAt"*/}
-          {/*  control={control}*/}
-          {/*  render={({ field, fieldState }) => (*/}
-          {/*    <DatePicker*/}
-          {/*      label="독서 시작일"*/}
-          {/*      disabled={readingStatus === 'WISHLIST'}*/}
-          {/*      {...field}*/}
-          {/*      slotProps={{*/}
-          {/*        textField: {*/}
-          {/*          fullWidth: true,*/}
-          {/*          error: !!fieldState.error,*/}
-          {/*          helperText: fieldState.error?.message,*/}
-          {/*        },*/}
-          {/*      }}*/}
-          {/*    />*/}
-          {/*  )}*/}
-          {/*/>*/}
-          {/*<Controller*/}
-          {/*  name="readingFinishedAt"*/}
-          {/*  control={control}*/}
-          {/*  render={({ field, fieldState }) => (*/}
-          {/*    <DatePicker*/}
-          {/*      label="독서 종료일"*/}
-          {/*      disabled={*/}
-          {/*        readingStatus === 'WISHLIST' ||*/}
-          {/*        readingStatus === 'READING' ||*/}
-          {/*        readingStatus === 'PAUSED'*/}
-          {/*      }*/}
-          {/*      {...field}*/}
-          {/*      slotProps={{*/}
-          {/*        textField: {*/}
-          {/*          fullWidth: true,*/}
-          {/*          error: !!fieldState.error,*/}
-          {/*          helperText: fieldState.error?.message,*/}
-          {/*        },*/}
-          {/*      }}*/}
-          {/*    />*/}
-          {/*  )}*/}
-          {/*/>*/}
         </Stack>
 
         {/* TODO: Actions - 컴포넌트로 이동 */}
