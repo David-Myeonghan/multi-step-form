@@ -1,28 +1,17 @@
-import { Box, CircularProgress, Paper, Stack, Typography } from '@mui/material';
-import React, { FC } from 'react';
-import BasicInfo, { StepComponentCommonProps } from '@/steps/BasicInfo';
+import { CircularProgress, Paper, Stack } from '@mui/material';
+import React from 'react';
+import BasicInfo from '@/steps/BasicInfo';
 import Recommendation from '@/steps/Recommendation';
 import Review from '@/steps/Review';
 import Quotation from '@/steps/Quotation';
 import SharingOption from '@/steps/SharingOption';
 import useStepNavigator from '@/hooks/useStepNavigator';
 import StepSwitcher from '@/components/StepSwitcher';
+import StepHeader from '@/components/StepHeader';
 // 1024px 기준
 
-type StepName = 'BasicInfo' | 'Recommendation' | 'Review' | 'Quotation' | 'SharingOption';
-type StepType = { step: number; name: StepName };
-
-export const STEP_LIST: Array<StepType> = [
-  { step: 1, name: 'BasicInfo' },
-  { step: 2, name: 'Recommendation' },
-  { step: 3, name: 'Review' },
-  { step: 4, name: 'Quotation' },
-  { step: 5, name: 'SharingOption' },
-];
-
 export default function Home() {
-  const { stepNumber, currentStep, isFirst, isLast, isLoading, goNext, goPrevious } =
-    useStepNavigator();
+  const { stepNumber, currentStep, isLoading } = useStepNavigator();
 
   if (isLoading) {
     return <CircularProgress />;
@@ -31,14 +20,8 @@ export default function Home() {
   return (
     <Paper elevation={3} sx={{ p: 3 }}>
       <Stack gap={3}>
-        {/* Title - TODO: object 이용해서 컴포넌트화 */}
-        <Box>
-          <Typography variant="h5">📚 도서 기본 정보</Typography>
-          <Typography variant="subtitle1">Step {currentStep.step} / 5</Typography>
-          <Typography variant="subtitle1">도서 기본 정보를 입력해주세요.</Typography>
-        </Box>
+        <StepHeader currentStep={currentStep.step} />
 
-        {/* Step */}
         <StepSwitcher
           value={stepNumber}
           cases={{
@@ -50,7 +33,6 @@ export default function Home() {
           }}
           fallback={<div>Error!</div>}
         />
-        {/*<StepComponent />*/}
       </Stack>
     </Paper>
   );

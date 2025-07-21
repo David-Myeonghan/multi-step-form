@@ -1,6 +1,16 @@
 import { useRouter } from 'next/router';
-import { STEP_LIST } from '@/pages';
 import { useEffect } from 'react';
+
+type StepName = 'BasicInfo' | 'Recommendation' | 'Review' | 'Quotation' | 'SharingOption';
+type StepType = { step: 1 | 2 | 3 | 4 | 5; name: StepName };
+
+export const STEP_LIST: Array<StepType> = [
+  { step: 1, name: 'BasicInfo' },
+  { step: 2, name: 'Recommendation' },
+  { step: 3, name: 'Review' },
+  { step: 4, name: 'Quotation' },
+  { step: 5, name: 'SharingOption' },
+];
 
 export default function useStepNavigator() {
   const { query, isReady, pathname, replace, push } = useRouter();
