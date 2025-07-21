@@ -1,16 +1,14 @@
 import { Button, Stack } from '@mui/material';
-import { useRouter } from 'next/router';
+import useStepNavigator from '@/hooks/useStepNavigator';
 
 interface FormActionProps {
   onPreviousClick: () => void;
   // queryStep: number
 }
 export default function FormAction({ onPreviousClick }: FormActionProps) {
-  const { query, isReady } = useRouter();
-  const rawStep = Array.isArray(query.step) ? query.step[0] : query.step;
-  const queryStep = Number(rawStep) || 1;
+  const { isLoading, isFirst, isLast } = useStepNavigator();
 
-  if (isReady === false || !queryStep) {
+  if (isLoading) {
     return null; // Loading
   }
 
@@ -21,7 +19,7 @@ export default function FormAction({ onPreviousClick }: FormActionProps) {
       sx={{ width: '100%', paddingTop: 3, position: 'relative' }}
       gap={2}
     >
-      {queryStep !== 1 && (
+      {isFirst === false && (
         <Button
           onClick={onPreviousClick}
           variant="contained"
@@ -31,7 +29,7 @@ export default function FormAction({ onPreviousClick }: FormActionProps) {
         </Button>
       )}
       <Button type="submit" variant="contained" sx={{ position: 'absolute', bottom: 0, right: 0 }}>
-        {queryStep === 5 ? '제출' : `다음 ➡`}
+        {isLast ? '제출' : `다음 ➡`}
       </Button>
     </Stack>
   );
