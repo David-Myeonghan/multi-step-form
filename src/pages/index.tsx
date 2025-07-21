@@ -6,6 +6,7 @@ import Review from '@/steps/Review';
 import Quotation from '@/steps/Quotation';
 import SharingOption from '@/steps/SharingOption';
 import useStepNavigator from '@/hooks/useStepNavigator';
+import StepSwitcher from '@/components/StepSwitcher';
 // 1024px 기준
 
 type StepName = 'BasicInfo' | 'Recommendation' | 'Review' | 'Quotation' | 'SharingOption';
@@ -18,18 +19,10 @@ export const STEP_LIST: Array<StepType> = [
   { step: 4, name: 'Quotation' },
   { step: 5, name: 'SharingOption' },
 ];
-const StepComponentMap: Record<StepName, FC<StepComponentCommonProps>> = {
-  BasicInfo: BasicInfo,
-  Recommendation: Recommendation,
-  Review: Review,
-  Quotation: Quotation,
-  SharingOption: SharingOption,
-};
+
 export default function Home() {
   const { stepNumber, currentStep, isFirst, isLast, isLoading, goNext, goPrevious } =
     useStepNavigator();
-
-  const StepComponent = StepComponentMap[currentStep.name];
 
   if (isLoading) {
     return <CircularProgress />;
@@ -44,8 +37,20 @@ export default function Home() {
           <Typography variant="subtitle1">Step {currentStep.step} / 5</Typography>
           <Typography variant="subtitle1">도서 기본 정보를 입력해주세요.</Typography>
         </Box>
+
         {/* Step */}
-        <StepComponent />
+        <StepSwitcher
+          value={stepNumber}
+          cases={{
+            1: <BasicInfo />,
+            2: <Recommendation />,
+            3: <Review />,
+            4: <Quotation />,
+            5: <SharingOption />,
+          }}
+          fallback={<div>Error!</div>}
+        />
+        {/*<StepComponent />*/}
       </Stack>
     </Paper>
   );
