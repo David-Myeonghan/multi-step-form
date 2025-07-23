@@ -18,6 +18,8 @@ import { useAtom } from 'jotai';
 import { useEffect } from 'react';
 import RHFDatePicker from '@/components/RHF/RHFDatePicker';
 import RHFProvider from '@/components/RHF/RHFProvider';
+import RHFTextField from '@/components/RHF/RHFTextField';
+import RHFRadio from '@/components/RHF/RHFRadio';
 
 const READING_STATUS = [
   { label: '읽고 싶은 책', value: 'WISHLIST' },
@@ -93,22 +95,10 @@ export default function BasicInfo({}: StepComponentCommonProps) {
         <Box>
           <Stack gap={2}>
             <Box>
-              <TextField
-                sx={{ width: '100%' }}
-                label="책 제목"
-                {...register('title')}
-                error={!!errors.title}
-                helperText={errors.title?.message}
-              />
+              <RHFTextField name="title" label="책 제목" />
             </Box>
             <Stack direction="row" gap={2}>
-              <TextField
-                sx={{ width: '100%' }}
-                label="저자"
-                {...register('author')}
-                error={!!errors.author}
-                helperText={errors.author?.message}
-              />
+              <RHFTextField name="author" label="저자" />
               <RHFDatePicker name="publishedAt" label="도서 출판일" />
             </Stack>
           </Stack>
@@ -116,43 +106,17 @@ export default function BasicInfo({}: StepComponentCommonProps) {
 
         {/* Reading Status */}
         <Box>
+          <RHFRadio radioTitle="독서 상태" name="readingStatus" radioGroupList={READING_STATUS} />
+
           <FormControl error={!!errors.readingStatus}>
             <FormLabel id="radio-buttons-reading-status-label">독서 상태</FormLabel>
-            <Controller
-              name={'readingStatus'}
-              control={control}
-              render={({ field }) => (
-                <RadioGroup row {...field}>
-                  {READING_STATUS.map(({ label, value }) => (
-                    <FormControlLabel key={value} value={value} control={<Radio />} label={label} />
-                  ))}
-                </RadioGroup>
-              )}
-            />
           </FormControl>
         </Box>
 
         {/* Start/End date */}
         <Stack direction="row" justifyContent="space-between" gap={2}>
           {dateFieldConfig[readingStatus].map(({ name, label }) => (
-            <Controller
-              key={name}
-              name={name}
-              control={control}
-              render={({ field, fieldState }) => (
-                <DatePicker
-                  label={label}
-                  {...field}
-                  slotProps={{
-                    textField: {
-                      fullWidth: true,
-                      error: !!fieldState.error,
-                      helperText: fieldState.error?.message,
-                    },
-                  }}
-                />
-              )}
-            />
+            <RHFDatePicker key={name} name={name} label={label} />
           ))}
         </Stack>
         <FormAction onPreviousClick={handlePreviousClick} />
