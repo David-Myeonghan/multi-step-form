@@ -1,26 +1,19 @@
-import { Control, Controller, FieldValues } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import { DatePicker, DatePickerSlotProps } from '@mui/x-date-pickers';
-import {} from '@/steps/BasicInfo';
 
 interface RHFDatePickerProps {
   name: string;
   label: string;
-  rules: Record<string, string>;
-  // control: Control<BasicInfoFields>;
+  rules?: Record<string, string>;
   slotProps?: DatePickerSlotProps<true> | undefined;
-  // sx?:
 }
-export default function RHFDatePicker({
-  name,
-  label,
-  rules,
-  // control,
-  slotProps,
-}: RHFDatePickerProps) {
+export default function RHFDatePicker({ name, label, rules, slotProps }: RHFDatePickerProps) {
+  const { control } = useFormContext();
+
   return (
     <Controller
       name={name}
-      // control={control}
+      control={control}
       rules={rules}
       render={({ field, fieldState }) => (
         <DatePicker
@@ -34,7 +27,6 @@ export default function RHFDatePicker({
             },
             ...slotProps,
           }}
-          // slotProps: textField, popper, day, layout
         />
       )}
     />

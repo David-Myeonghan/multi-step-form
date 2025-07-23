@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -17,6 +16,8 @@ import FormAction from '@/components/FormAction';
 import { basicInfoAtom } from '@/Atom/BasinInfo';
 import { useAtom } from 'jotai';
 import { useEffect } from 'react';
+import RHFDatePicker from '@/components/RHF/RHFDatePicker';
+import RHFProvider from '@/components/RHF/RHFProvider';
 
 const READING_STATUS = [
   { label: '읽고 싶은 책', value: 'WISHLIST' },
@@ -39,18 +40,13 @@ const dateFieldConfig: Record<
 };
 
 export interface StepComponentCommonProps {
-  onNext: () => void;
-  onPrevious: () => void;
+  // onNext: () => void;
+  // onPrevious: () => void;
 }
-export default function BasicInfo({ onNext, onPrevious }: StepComponentCommonProps) {
-  const [basicInfoStorage, setBasicInfo] = useAtom<>(basicInfoAtom);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    control,
-    reset,
-  } = useForm<BasicInfoFormValues>({
+export default function BasicInfo({}: StepComponentCommonProps) {
+  // const
+  const [basicInfoStorage, setBasicInfo] = useAtom(basicInfoAtom);
+  const methods = useForm<BasicInfoFormValues>({
     defaultValues: {
       title: '',
       author: '',
@@ -62,16 +58,23 @@ export default function BasicInfo({ onNext, onPrevious }: StepComponentCommonPro
     shouldUnregister: true,
     resolver: zodResolver(basicInfoSchema),
   });
+  const {
+    register,
+    formState: { errors },
+    control,
+    reset,
+  } = methods;
+
   const readingStatus = useWatch({ control, name: 'readingStatus' });
 
   const handleNextClick = (data: BasicInfoFormValues) => {
-    console.log(data);
+    // console.log(data);
     // if ok,
     setBasicInfo(data);
-    onNext();
+    // onNext();
   };
   const handlePreviousClick = () => {
-    onPrevious();
+    // onPrevious();
   };
 
   useEffect(() => {
@@ -85,7 +88,7 @@ export default function BasicInfo({ onNext, onPrevious }: StepComponentCommonPro
   }, []);
 
   return (
-    <form onSubmit={handleSubmit(handleNextClick)}>
+    <RHFProvider methods={methods} onSubmit={handleNextClick}>
       <Stack gap={2}>
         <Box>
           <Stack gap={2}>
@@ -106,24 +109,7 @@ export default function BasicInfo({ onNext, onPrevious }: StepComponentCommonPro
                 error={!!errors.author}
                 helperText={errors.author?.message}
               />
-              <Controller
-                name="publishedAt"
-                control={control}
-                render={({ field, fieldState }) => (
-                  <DatePicker
-                    label="도서 출판일"
-                    {...field}
-                    sx={{ width: '100%' }}
-                    slotProps={{
-                      textField: {
-                        fullWidth: true,
-                        error: !!fieldState.error,
-                        helperText: fieldState.error?.message,
-                      },
-                    }}
-                  />
-                )}
-              />
+              <RHFDatePicker name="publishedAt" label="도서 출판일" />
             </Stack>
           </Stack>
         </Box>
@@ -171,6 +157,6 @@ export default function BasicInfo({ onNext, onPrevious }: StepComponentCommonPro
         </Stack>
         <FormAction onPreviousClick={handlePreviousClick} />
       </Stack>
-    </form>
+    </RHFProvider>
   );
 }
