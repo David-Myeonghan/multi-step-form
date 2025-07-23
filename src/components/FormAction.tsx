@@ -1,15 +1,14 @@
 import { Button, Stack } from '@mui/material';
 import useStepNavigator from '@/hooks/useStepNavigator';
+import CenterLoading from '@/components/CenterLoading';
 
-interface FormActionProps {
-  onPreviousClick: () => void;
-  // queryStep: number
-}
-export default function FormAction({ onPreviousClick }: FormActionProps) {
-  const { isLoading, isFirst, isLast } = useStepNavigator();
+interface FormActionProps {}
+
+export default function FormAction({}: FormActionProps) {
+  const { isLoading, isFirst, isLast, goNext, goPrevious } = useStepNavigator();
 
   if (isLoading) {
-    return null; // Loading
+    return <CenterLoading />;
   }
 
   return (
@@ -21,7 +20,7 @@ export default function FormAction({ onPreviousClick }: FormActionProps) {
     >
       {isFirst === false && (
         <Button
-          onClick={onPreviousClick}
+          onClick={goPrevious}
           variant="contained"
           sx={{ position: 'absolute', bottom: 0, left: 0 }}
         >

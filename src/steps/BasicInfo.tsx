@@ -41,12 +41,8 @@ const dateFieldConfig: Record<
   ],
 };
 
-export interface StepComponentCommonProps {
-  // onNext: () => void;
-  // onPrevious: () => void;
-}
+export interface StepComponentCommonProps {}
 export default function BasicInfo({}: StepComponentCommonProps) {
-  // const
   const [basicInfoStorage, setBasicInfo] = useAtom(basicInfoAtom);
   const methods = useForm<BasicInfoFormValues>({
     defaultValues: {
@@ -60,12 +56,7 @@ export default function BasicInfo({}: StepComponentCommonProps) {
     shouldUnregister: true,
     resolver: zodResolver(basicInfoSchema),
   });
-  const {
-    register,
-    formState: { errors },
-    control,
-    reset,
-  } = methods;
+  const { control, reset } = methods;
 
   const readingStatus = useWatch({ control, name: 'readingStatus' });
 
@@ -74,9 +65,6 @@ export default function BasicInfo({}: StepComponentCommonProps) {
     // if ok,
     setBasicInfo(data);
     // onNext();
-  };
-  const handlePreviousClick = () => {
-    // onPrevious();
   };
 
   useEffect(() => {
@@ -94,9 +82,11 @@ export default function BasicInfo({}: StepComponentCommonProps) {
       <Stack gap={2}>
         <Box>
           <Stack gap={2}>
+            {/* Title */}
             <Box>
               <RHFTextField name="title" label="책 제목" />
             </Box>
+            {/* Author, Published At */}
             <Stack direction="row" gap={2}>
               <RHFTextField name="author" label="저자" />
               <RHFDatePicker name="publishedAt" label="도서 출판일" />
@@ -107,10 +97,6 @@ export default function BasicInfo({}: StepComponentCommonProps) {
         {/* Reading Status */}
         <Box>
           <RHFRadio radioTitle="독서 상태" name="readingStatus" radioGroupList={READING_STATUS} />
-
-          <FormControl error={!!errors.readingStatus}>
-            <FormLabel id="radio-buttons-reading-status-label">독서 상태</FormLabel>
-          </FormControl>
         </Box>
 
         {/* Start/End date */}
@@ -119,7 +105,9 @@ export default function BasicInfo({}: StepComponentCommonProps) {
             <RHFDatePicker key={name} name={name} label={label} />
           ))}
         </Stack>
-        <FormAction onPreviousClick={handlePreviousClick} />
+
+        {/* Form Action ?? */}
+        <FormAction />
       </Stack>
     </RHFProvider>
   );
