@@ -1,5 +1,3 @@
-import { useRouter } from 'next/router';
-import { useEffect } from 'react';
 import useInitializeStepQuery from '@/hooks/useInitializeStepQuery';
 import useDerivedStep from '@/hooks/useDerivedStep';
 import useStepActions from '@/hooks/useStepActions';

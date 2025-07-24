@@ -6,9 +6,7 @@ import { useFormContext } from 'react-hook-form';
 import { useAtom } from 'jotai/index';
 import { allFormInfoAtom } from '@/Atom/allFormInfo';
 
-interface FormActionProps {}
-
-export default function FormAction({}: FormActionProps) {
+export default function FormAction() {
   const { trigger, getValues, reset } = useFormContext();
   const { isLoading, isFirst, isLast, goPrevious, goNext, stepNumber } = useStepNavigator();
   const [allFormInfoStorage, setBasicInfo] = useAtom(allFormInfoAtom);

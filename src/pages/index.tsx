@@ -1,6 +1,6 @@
 import { Paper, Stack } from '@mui/material';
 import React from 'react';
-import BasicInfo from '@/steps/BasicInfo';
+import BasicInfo from '@/steps/BasicInfo/BasicInfo';
 import Recommendation from '@/steps/Recommendation';
 import Review from '@/steps/Review';
 import Quotation from '@/steps/Quotation';
@@ -34,7 +34,7 @@ export default function Home() {
     resolver: (values, context, options) => {
       const { stepNumber } = context;
       const schema = schemasByStep[context];
-      //
+      // 동적 변경
       return zodResolver(basicInfoSchema)(values, context, options);
     },
   });
