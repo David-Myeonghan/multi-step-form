@@ -1,5 +1,5 @@
 import { CircularProgress, Paper, Stack } from '@mui/material';
-import React from 'react';
+import React, { useEffect } from 'react';
 import BasicInfo from '@/steps/BasicInfo';
 import Recommendation from '@/steps/Recommendation';
 import Review from '@/steps/Review';
@@ -8,10 +8,52 @@ import SharingOption from '@/steps/SharingOption';
 import useStepNavigator from '@/hooks/useStepNavigator';
 import StepSwitcher from '@/components/StepSwitcher';
 import StepHeader from '@/components/StepHeader';
+import FormAction from '@/components/FormAction';
+import { useForm } from 'react-hook-form';
+import { BasicInfoFormValues, basicInfoSchema } from '@/schemas/BasicInfoSchema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useAtom } from 'jotai/index';
+import { basicInfoAtom } from '@/Atom/BasinInfo';
+import RHFProvider from '@/components/RHF/RHFProvider';
 // 1024px 기준
 
 export default function Home() {
-  const { stepNumber, currentStep, isLoading } = useStepNavigator();
+  const { stepNumber, currentStep, isLoading, goNext } = useStepNavigator();
+  // const [basicInfoStorage, setBasicInfo] = useAtom(basicInfoAtom);
+
+  const methods = useForm<BasicInfoFormValues>({
+    defaultValues: {
+      title: '',
+      author: '',
+      readingStatus: 'WISHLIST',
+      publishedAt: null,
+      readingStartedAt: null,
+      readingFinishedAt: null,
+    },
+    shouldUnregister: true,
+    resolver: zodResolver(basicInfoSchema),
+  });
+  const { control, reset } = methods;
+
+  const handleSubmit = async data => {
+    console.log(data);
+
+    if (isLast === false) {
+      goNext();
+    } else {
+      // await submit()
+    }
+  };
+
+  // useEffect(() => {
+  //   if (
+  //     typeof basicInfoStorage === 'object' &&
+  //     basicInfoStorage !== null &&
+  //     Object.keys(basicInfoStorage).length > 0
+  //   ) {
+  //     reset(basicInfoStorage);
+  //   }
+  // }, []);
 
   if (isLoading) {
     return <CircularProgress />;
@@ -22,17 +64,20 @@ export default function Home() {
       <Stack gap={3}>
         <StepHeader currentStep={currentStep.step} />
 
-        <StepSwitcher
-          value={stepNumber}
-          cases={{
-            1: <BasicInfo />,
-            2: <Recommendation />,
-            3: <Review />,
-            4: <Quotation />,
-            5: <SharingOption />,
-          }}
-          fallback={<div>Error!</div>}
-        />
+        <RHFProvider methods={methods} onSubmit={handleSubmit}>
+          <StepSwitcher
+            value={stepNumber}
+            cases={{
+              1: <BasicInfo />,
+              2: <Recommendation />,
+              3: <Review />,
+              4: <Quotation />,
+              5: <SharingOption />,
+            }}
+            fallback={<div>Error!</div>}
+          />
+          <FormAction />
+        </RHFProvider>
       </Stack>
     </Paper>
   );

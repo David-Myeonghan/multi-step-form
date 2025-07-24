@@ -1,23 +1,7 @@
-import {
-  Box,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  RadioGroup,
-  Stack,
-  TextField,
-} from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers';
-import { Controller, useForm, useWatch } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { BasicInfoFormValues, basicInfoSchema } from '@/schemas/BasicInfoSchema';
-import FormAction from '@/components/FormAction';
-import { basicInfoAtom } from '@/Atom/BasinInfo';
-import { useAtom } from 'jotai';
-import { useEffect } from 'react';
+import { Box, Stack } from '@mui/material';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { BasicInfoFormValues } from '@/schemas/BasicInfoSchema';
 import RHFDatePicker from '@/components/RHF/RHFDatePicker';
-import RHFProvider from '@/components/RHF/RHFProvider';
 import RHFTextField from '@/components/RHF/RHFTextField';
 import RHFRadio from '@/components/RHF/RHFRadio';
 
@@ -41,74 +25,37 @@ const dateFieldConfig: Record<
   ],
 };
 
-export interface StepComponentCommonProps {}
-export default function BasicInfo({}: StepComponentCommonProps) {
-  const [basicInfoStorage, setBasicInfo] = useAtom(basicInfoAtom);
-  const methods = useForm<BasicInfoFormValues>({
-    defaultValues: {
-      title: '',
-      author: '',
-      readingStatus: 'WISHLIST',
-      publishedAt: null,
-      readingStartedAt: null,
-      readingFinishedAt: null,
-    },
-    shouldUnregister: true,
-    resolver: zodResolver(basicInfoSchema),
-  });
-  const { control, reset } = methods;
-
-  const readingStatus = useWatch({ control, name: 'readingStatus' });
-
-  const handleNextClick = (data: BasicInfoFormValues) => {
-    // console.log(data);
-    // if ok,
-    setBasicInfo(data);
-    // onNext();
-  };
-
-  useEffect(() => {
-    if (
-      typeof basicInfoStorage === 'object' &&
-      basicInfoStorage !== null &&
-      Object.keys(basicInfoStorage).length > 0
-    ) {
-      reset(basicInfoStorage);
-    }
-  }, []);
+export default function BasicInfo() {
+  const { control } = useFormContext();
+  const readingStatus = useWatch({ control, name: 'readingStatus', defaultValue: 'WISHLIST' });
 
   return (
-    <RHFProvider methods={methods} onSubmit={handleNextClick}>
-      <Stack gap={2}>
-        <Box>
-          <Stack gap={2}>
-            {/* Title */}
-            <Box>
-              <RHFTextField name="title" label="책 제목" />
-            </Box>
-            {/* Author, Published At */}
-            <Stack direction="row" gap={2}>
-              <RHFTextField name="author" label="저자" />
-              <RHFDatePicker name="publishedAt" label="도서 출판일" />
-            </Stack>
+    <Stack gap={2}>
+      <Box>
+        <Stack gap={2}>
+          {/* Title */}
+          <Box>
+            <RHFTextField name="title" label="책 제목" />
+          </Box>
+          {/* Author, Published At */}
+          <Stack direction="row" gap={2}>
+            <RHFTextField name="author" label="저자" />
+            <RHFDatePicker name="publishedAt" label="도서 출판일" />
           </Stack>
-        </Box>
-
-        {/* Reading Status */}
-        <Box>
-          <RHFRadio radioTitle="독서 상태" name="readingStatus" radioGroupList={READING_STATUS} />
-        </Box>
-
-        {/* Start/End date */}
-        <Stack direction="row" justifyContent="space-between" gap={2}>
-          {dateFieldConfig[readingStatus].map(({ name, label }) => (
-            <RHFDatePicker key={name} name={name} label={label} />
-          ))}
         </Stack>
+      </Box>
 
-        {/* Form Action ?? */}
-        <FormAction />
+      {/* Reading Status */}
+      <Box>
+        <RHFRadio radioTitle="독서 상태" name="readingStatus" radioGroupList={READING_STATUS} />
+      </Box>
+
+      {/* Start/End date */}
+      <Stack direction="row" justifyContent="space-between" gap={2}>
+        {dateFieldConfig[readingStatus].map(({ name, label }) => (
+          <RHFDatePicker key={name} name={name} label={label} />
+        ))}
       </Stack>
-    </RHFProvider>
+    </Stack>
   );
 }
