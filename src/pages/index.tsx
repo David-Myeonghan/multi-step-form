@@ -13,13 +13,14 @@ import { useForm } from 'react-hook-form';
 import { BasicInfoFormValues, basicInfoSchema } from '@/schemas/BasicInfoSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAtom } from 'jotai/index';
-import { basicInfoAtom } from '@/Atom/BasinInfo';
+import { basicInfoAtom } from '@/Atom/allFormInfo';
 import RHFProvider from '@/components/RHF/RHFProvider';
+import { schemasByStep } from '@/schemas';
+import CenterLoading from '@/components/CenterLoading';
 // 1024px 기준
 
 export default function Home() {
-  const { stepNumber, currentStep, isLoading, goNext } = useStepNavigator();
-  // const [basicInfoStorage, setBasicInfo] = useAtom(basicInfoAtom);
+  const { stepNumber, currentStep, isLoading } = useStepNavigator();
 
   const methods = useForm<BasicInfoFormValues>({
     defaultValues: {
@@ -31,40 +32,34 @@ export default function Home() {
       readingFinishedAt: null,
     },
     shouldUnregister: true,
-    resolver: zodResolver(basicInfoSchema),
+    context: { stepNumber },
+    resolver: (values, context, options) => {
+      const { stepNumber } = context;
+      const schema = schemasByStep[context];
+      //
+      return zodResolver(basicInfoSchema)(values, context, options);
+    },
   });
-  const { control, reset } = methods;
+  // const {
+  //   formState: { errors },
+  // } = methods;
+  // console.log(errors);
 
   const handleSubmit = async data => {
     console.log(data);
-
-    if (isLast === false) {
-      goNext();
-    } else {
-      // await submit()
-    }
+    // const res = await submit(data);
   };
 
-  // useEffect(() => {
-  //   if (
-  //     typeof basicInfoStorage === 'object' &&
-  //     basicInfoStorage !== null &&
-  //     Object.keys(basicInfoStorage).length > 0
-  //   ) {
-  //     reset(basicInfoStorage);
-  //   }
-  // }, []);
-
   if (isLoading) {
-    return <CircularProgress />;
+    return <CenterLoading />;
   }
 
   return (
     <Paper elevation={3} sx={{ p: 3 }}>
-      <Stack gap={3}>
-        <StepHeader currentStep={currentStep.step} />
+      <RHFProvider methods={methods} onSubmit={handleSubmit}>
+        <Stack gap={3}>
+          <StepHeader currentStep={currentStep.step} />
 
-        <RHFProvider methods={methods} onSubmit={handleSubmit}>
           <StepSwitcher
             value={stepNumber}
             cases={{
@@ -77,8 +72,8 @@ export default function Home() {
             fallback={<div>Error!</div>}
           />
           <FormAction />
-        </RHFProvider>
-      </Stack>
+        </Stack>
+      </RHFProvider>
     </Paper>
   );
 }
