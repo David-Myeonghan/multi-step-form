@@ -29,7 +29,6 @@ export default function Home() {
       readingStartedAt: null,
       readingFinishedAt: null,
     },
-    shouldUnregister: true,
     context: { stepNumber },
     resolver: (values, context, options) => {
       const { stepNumber } = context;
