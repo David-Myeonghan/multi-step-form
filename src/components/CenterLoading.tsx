@@ -1,4 +1,4 @@
-import { CircularProgress } from '@mui/material';
+import { Stack, CircularProgress } from '@mui/material';
 
 export default function CenterLoading() {
   return (
