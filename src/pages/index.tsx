@@ -10,17 +10,16 @@ import StepSwitcher from '@/components/StepSwitcher';
 import StepHeader from '@/components/StepHeader';
 import FormAction from '@/components/FormAction';
 import { useForm } from 'react-hook-form';
-import { BasicInfoFormValues, basicInfoSchema } from '@/schemas/BasicInfoSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import RHFProvider from '@/components/RHF/RHFProvider';
-import { schemasByStep } from '@/schemas';
+import { MultiStepFormValues, schemasByStep } from '@/schemas';
 import CenterLoading from '@/components/CenterLoading';
 // 1024px 기준
 
 export default function Home() {
   const { stepNumber, currentStep, isLoading } = useStepNavigator();
 
-  const methods = useForm<BasicInfoFormValues>({
+  const methods = useForm<MultiStepFormValues>({
     defaultValues: {
       title: '',
       author: '',
@@ -28,7 +27,9 @@ export default function Home() {
       publishedAt: null,
       readingStartedAt: null,
       readingFinishedAt: null,
-      // 다른 필드...
+      rating: null,
+      review: '',
+      // 다른 step 필드...
     },
     context: { stepNumber },
     resolver: (values, context, options) => {
@@ -61,10 +62,10 @@ export default function Home() {
             value={stepNumber}
             cases={{
               1: <BasicInfo />,
-              2: <Recommendation />,
-              3: <Review />,
-              4: <Quotation />,
-              5: <SharingOption />,
+              2: <Recommendation />, // 2 + 3
+              // 3: <Review />,
+              3: <Quotation />,
+              4: <SharingOption />,
             }}
             fallback={<div>Error!</div>}
           />
