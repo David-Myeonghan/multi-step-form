@@ -28,13 +28,17 @@ export default function Home() {
       publishedAt: null,
       readingStartedAt: null,
       readingFinishedAt: null,
+      // 다른 필드...
     },
     context: { stepNumber },
     resolver: (values, context, options) => {
       const { stepNumber } = context;
-      const schema = schemasByStep[context];
+      console.log(stepNumber);
+      const schema = schemasByStep[stepNumber];
+      console.log(schema);
       // 동적 변경
-      return zodResolver(basicInfoSchema)(values, context, options);
+
+      return zodResolver(schema)(values, context, options);
     },
   });
 
