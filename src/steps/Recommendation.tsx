@@ -1,54 +1,22 @@
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import RHFTextField from '@/components/RHF/RHFTextField';
-import StarBorderIcon from '@mui/icons-material/StarBorder';
 import { Box, Stack, Typography } from '@mui/material';
-import { useState } from 'react';
+import RatingStar from '@/components/RatingStar';
 
 export default function Recommendation() {
   const {
+    control,
     setValue,
     formState: { errors },
   } = useFormContext();
-  console.log(errors);
-
-  const [hoverRating, setHoverRating] = useState<number>(0);
-
-  const handleStarClick = () => {
-    setValue('rating', hoverRating);
-  };
-  const handleStarMouseEnter = (starValue: number, isHalf: boolean = false) => {
-    const newRating = isHalf ? starValue - 0.5 : starValue;
-    setHoverRating(newRating);
-  };
-  const handleMouseLeave = () => {
-    setHoverRating(0);
-  };
+  const ratingValue = useWatch({ control, name: 'rating' });
+  const handleStarClick = (rating: number) => setValue('rating', rating);
 
   return (
     <Stack gap={3}>
       <Stack gap={1} alignItems="center">
         <Typography>별점을 선택해주세요.</Typography>
-        <Stack direction="row">
-          {[1, 2, 3, 4, 5].map(star => (
-            <div key={star}>
-              {/*// left*/}
-              <button
-                onClick={handleStarClick}
-                onMouseEnter={() => handleStarMouseEnter(star, true)}
-                onMouseLeave={handleMouseLeave}
-              />
-              {/*// right*/}
-              <button
-                onClick={handleStarClick}
-                onMouseEnter={() => handleStarMouseEnter(star, false)}
-                onMouseLeave={handleMouseLeave}
-              />
-              <StarBorderIcon fontSize="large" color="disabled" />
-            </div>
-          ))}
-        </Stack>
-
-        <Box>12345</Box>
+        <RatingStar ratingValue={ratingValue} onStarClick={handleStarClick} />
       </Stack>
 
       <Stack>
