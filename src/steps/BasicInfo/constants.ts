@@ -7,7 +7,7 @@ export const READING_STATUS = [
   { label: '읽는 중', value: 'READING' },
   { label: '읽음', value: 'COMPLETED' },
   { label: '보류 중', value: 'PAUSED' },
-] as const;
+];
 
 export const dateFieldConfig: Record<
   BasicInfoFormValues['readingStatus'],

@@ -9,20 +9,20 @@ import { allFormInfoAtom } from '@/Atom/allFormInfo';
 export default function FormAction() {
   const { trigger, getValues, reset } = useFormContext();
   const { isLoading, isFirst, isLast, goPrevious, goNext, stepNumber } = useStepNavigator();
-  const [allFormInfoStorage, setBasicInfo] = useAtom(allFormInfoAtom);
+  const [allFormInfoStorage, setAllFormInfoStorage] = useAtom(allFormInfoAtom);
 
   const handleNextClick = async () => {
     const isValid = await trigger();
     if (isValid) {
       const currentInfo = getValues();
-      setBasicInfo(prev => ({ ...prev, ...currentInfo }));
+      setAllFormInfoStorage(prev => ({ ...prev, ...currentInfo }));
       goNext();
     }
   };
 
   const handlePrevClick = () => {
     const currentInfo = getValues();
-    setBasicInfo(prev => ({ ...prev, ...currentInfo }));
+    setAllFormInfoStorage(prev => ({ ...prev, ...currentInfo }));
     goPrevious();
   };
 

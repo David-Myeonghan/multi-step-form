@@ -27,7 +27,7 @@ export default function Home() {
       publishedAt: null,
       readingStartedAt: null,
       readingFinishedAt: null,
-      rating: null,
+      rating: 0,
       review: '',
       // 다른 step 필드...
     },
@@ -35,7 +35,7 @@ export default function Home() {
     resolver: (values, context, options) => {
       const { stepNumber } = context;
       console.log(stepNumber);
-      const schema = schemasByStep[stepNumber];
+      const schema = schemasByStep[stepNumber as keyof typeof schemasByStep];
       console.log(schema);
       // 동적 변경
 
@@ -43,7 +43,7 @@ export default function Home() {
     },
   });
 
-  const handleSubmit = async data => {
+  const handleSubmit = async (data: MultiStepFormValues) => {
     console.log(data);
     // const res = await submit(data);
   };

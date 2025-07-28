@@ -1,14 +1,21 @@
 import { TextField } from '@mui/material';
+import { SxProps } from '@mui/material/styles';
 import { useFormContext } from 'react-hook-form';
 
 interface RHFTextFieldProps {
   name: string;
   label: string;
-  sx?: sxProps;
+  sx?: SxProps;
   multiline?: boolean;
   rows?: number;
 }
-export default function RHFTextField({ name, label, sx = { width: '100%' }, multiline, rows }: RHFTextFieldProps) {
+export default function RHFTextField({
+  name,
+  label,
+  sx = { width: '100%' },
+  multiline,
+  rows,
+}: RHFTextFieldProps) {
   const {
     register,
     formState: { errors },
