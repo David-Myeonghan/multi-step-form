@@ -2,7 +2,6 @@ import { Paper, Stack } from '@mui/material';
 import React from 'react';
 import BasicInfo from '@/steps/BasicInfo/BasicInfo';
 import Recommendation from '@/steps/Recommendation';
-import Review from '@/steps/Review';
 import Quotation from '@/steps/Quotation';
 import SharingOption from '@/steps/SharingOption';
 import useStepNavigator from '@/hooks/useStepNavigator';
@@ -19,6 +18,8 @@ import CenterLoading from '@/components/CenterLoading';
 export default function Home() {
   const { stepNumber, currentStep, isLoading } = useStepNavigator();
 
+  const resolver = zodResolver(schemasByStep[stepNumber as keyof typeof schemasByStep] as any);
+
   const methods = useForm<MultiStepFormValues>({
     defaultValues: {
       title: '',
@@ -31,16 +32,7 @@ export default function Home() {
       review: '',
       // 다른 step 필드...
     },
-    context: { stepNumber },
-    resolver: (values, context, options) => {
-      const { stepNumber } = context;
-      console.log(stepNumber);
-      const schema = schemasByStep[stepNumber as keyof typeof schemasByStep];
-      console.log(schema);
-      // 동적 변경
-
-      return zodResolver(schema)(values, context, options);
-    },
+    resolver,
   });
 
   const handleSubmit = async (data: MultiStepFormValues) => {

@@ -1,6 +1,7 @@
 import { TextField } from '@mui/material';
 import { SxProps } from '@mui/material/styles';
 import { useFormContext } from 'react-hook-form';
+import { ReactNode } from 'react';
 
 interface RHFTextFieldProps {
   name: string;
@@ -21,12 +22,14 @@ export default function RHFTextField({
     formState: { errors },
   } = useFormContext();
 
+  const fieldError = errors[name];
+
   return (
     <TextField
       label={label}
       {...register(name)}
-      error={!!errors.title}
-      helperText={errors.title?.message}
+      error={!!fieldError}
+      helperText={fieldError?.message as ReactNode}
       sx={sx}
       multiline={multiline}
       rows={rows}
