@@ -5,6 +5,7 @@ import CenterLoading from '@/components/CenterLoading';
 import { useFormContext } from 'react-hook-form';
 import { useAtom } from 'jotai/index';
 import { allFormInfoAtom } from '@/Atom/allFormInfo';
+import { MultiStepFormValues } from '@/schemas';
 
 export default function FormAction() {
   const { trigger, getValues, reset } = useFormContext();
@@ -15,18 +16,18 @@ export default function FormAction() {
     const isValid = await trigger();
     if (isValid) {
       const currentInfo = getValues();
-      setAllFormInfoStorage(prev => ({ ...prev, ...currentInfo }));
+      setAllFormInfoStorage((prev: Partial<MultiStepFormValues>) => ({ ...prev, ...currentInfo }));
       goNext();
     }
   };
 
   const handlePrevClick = () => {
     const currentInfo = getValues();
-    setAllFormInfoStorage(prev => ({ ...prev, ...currentInfo }));
+    setAllFormInfoStorage((prev: Partial<MultiStepFormValues>) => ({ ...prev, ...currentInfo }));
     goPrevious();
   };
 
-  const buttonProps = isLast ? { type: 'submit' } : { onClick: handleNextClick };
+  const buttonProps = isLast ? ({ type: 'submit' } as const) : { onClick: handleNextClick };
 
   useEffect(() => {
     if (
