@@ -10,7 +10,6 @@ export const recommendationSchema = z
   })
   .refine(
     ({ rating, review }) => {
-      console.log(rating, review);
       if (rating === 1 || rating === 5) {
         return (review?.trim().length ?? 0) >= 100;
       }
