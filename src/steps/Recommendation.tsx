@@ -1,16 +1,18 @@
 import { useFormContext, useWatch } from 'react-hook-form';
 import RHFTextField from '@/components/RHF/RHFTextField';
-import { Box, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import RatingStar from '@/components/RatingStar';
 
 export default function Recommendation() {
   const {
     control,
     setValue,
-    formState: { errors },
+    formState: { isReady, errors },
   } = useFormContext();
   const ratingValue = useWatch({ control, name: 'rating' });
-  const handleStarClick = (rating: number) => setValue('rating', rating);
+  const handleStarClick = (rating: number) => {
+    isReady && setValue('rating', rating);
+  };
 
   return (
     <Stack gap={3}>

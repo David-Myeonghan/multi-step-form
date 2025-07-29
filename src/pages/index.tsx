@@ -21,6 +21,7 @@ export default function Home() {
   const resolver = zodResolver(schemasByStep[stepNumber as keyof typeof schemasByStep] as any);
 
   const methods = useForm<MultiStepFormValues>({
+    mode: 'onSubmit',
     defaultValues: {
       title: '',
       author: '',
