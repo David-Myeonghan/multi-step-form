@@ -20,7 +20,7 @@ export default function Recommendation() {
       </Stack>
 
       <Stack>
-        <Box>
+        <Stack gap={1}>
           <Typography>코멘트</Typography>
           <RHFTextField
             label="책에 대한 생각을 자유롭게 남겨주세요"
@@ -28,7 +28,7 @@ export default function Recommendation() {
             multiline={true}
             rows={5}
           />
-        </Box>
+        </Stack>
       </Stack>
     </Stack>
   );

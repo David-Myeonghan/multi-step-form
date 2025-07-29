@@ -9,8 +9,9 @@ interface RatingStarProps {
 export default function RatingStar({ ratingValue, onStarClick }: RatingStarProps) {
   const [hoverRating, setHoverRating] = useState<number>(0);
 
-  const handleStarClick = () => {
-    onStarClick && onStarClick(hoverRating);
+  const handleStarClick = (starValue: number, isHalf: boolean = false) => {
+    const newRating = isHalf ? starValue - 0.5 : starValue;
+    onStarClick(newRating);
   };
   const handleStarMouseEnter = (starValue: number, isHalf: boolean = false) => {
     const newRating = isHalf ? starValue - 0.5 : starValue;
@@ -33,7 +34,7 @@ export default function RatingStar({ ratingValue, onStarClick }: RatingStarProps
           >
             {/*// left*/}
             <button
-              onClick={handleStarClick}
+              onClick={() => handleStarClick(star, true)}
               onMouseEnter={() => handleStarMouseEnter(star, true)}
               onMouseLeave={handleMouseLeave}
               style={{
@@ -43,15 +44,14 @@ export default function RatingStar({ ratingValue, onStarClick }: RatingStarProps
                 left: 0,
                 width: '16px',
                 height: '28px',
-                // border: '1px solid yellow',
-                backgroundColor: ratingValue >= star - 0.5 ? '#FFFF00AA' : '',
+                backgroundColor: (hoverRating || ratingValue) >= star - 0.5 ? '#FFFF00AA' : '',
               }}
             />
             <StarBorderIcon fontSize="large" color="disabled" />
 
             {/*// right*/}
             <button
-              onClick={handleStarClick}
+              onClick={() => handleStarClick(star, false)}
               onMouseEnter={() => handleStarMouseEnter(star, false)}
               onMouseLeave={handleMouseLeave}
               style={{
@@ -61,14 +61,13 @@ export default function RatingStar({ ratingValue, onStarClick }: RatingStarProps
                 right: 0,
                 width: '18px',
                 height: '32px',
-                // border: '1px solid yellow',
-                backgroundColor: ratingValue >= star ? '#FFFF00AA' : '',
+                backgroundColor: (hoverRating || ratingValue) >= star ? '#FFFF00AA' : '',
               }}
             />
           </Stack>
         ))}
       </Stack>
-      <Typography>{hoverRating} / 5</Typography>
+      <Typography>{hoverRating || ratingValue} / 5</Typography>
     </Stack>
   );
 }
