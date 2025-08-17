@@ -1,11 +1,13 @@
 import { BasicInfoFormValues } from '@/schemas/BasicInfoSchema';
 
+export type ReadingStatus = 'WISHLIST' | 'READING' | 'COMPLETED' | 'PAUSED';
+
 export const READING_STATUS = [
   { label: '읽고 싶은 책', value: 'WISHLIST' },
   { label: '읽는 중', value: 'READING' },
   { label: '읽음', value: 'COMPLETED' },
   { label: '보류 중', value: 'PAUSED' },
-] as const;
+];
 
 export const dateFieldConfig: Record<
   BasicInfoFormValues['readingStatus'],

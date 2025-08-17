@@ -32,9 +32,11 @@ export default function BasicInfo() {
 
       {/* Start/End date */}
       <Stack direction="row" justifyContent="space-between" gap={2}>
-        {dateFieldConfig[readingStatus].map(({ name, label }) => (
-          <RHFDatePicker key={name} name={name} label={label} />
-        ))}
+        {dateFieldConfig[readingStatus as keyof typeof dateFieldConfig].map(
+          ({ name, label }: { name: string; label: string }) => (
+            <RHFDatePicker key={name} name={name} label={label} />
+          ),
+        )}
       </Stack>
     </Stack>
   );
