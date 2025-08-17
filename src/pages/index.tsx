@@ -1,64 +1,72 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  RadioGroup,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers';
+import { Paper, Stack } from '@mui/material';
+import React from 'react';
+import BasicInfo from '@/steps/BasicInfo/BasicInfo';
+import Recommendation from '@/steps/Recommendation';
+import Review from '@/steps/Review';
+import Quotation from '@/steps/Quotation';
+import SharingOption from '@/steps/SharingOption';
+import useStepNavigator from '@/hooks/useStepNavigator';
+import StepSwitcher from '@/components/StepSwitcher';
+import StepHeader from '@/components/StepHeader';
+import FormAction from '@/components/FormAction';
+import { useForm } from 'react-hook-form';
+import { BasicInfoFormValues, basicInfoSchema } from '@/schemas/BasicInfoSchema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import RHFProvider from '@/components/RHF/RHFProvider';
+import { schemasByStep } from '@/schemas';
+import CenterLoading from '@/components/CenterLoading';
+// 1024px 기준
 
 export default function Home() {
-  return (
-    <>
-      <Stack>
-        <Box>
-          <Typography variant="h5">📚 도서 기본 정보</Typography>
-          <Typography variant="subtitle1">Step 1 / 5</Typography>
-          <Typography variant="subtitle1">도서 기본 정보를 입력해주세요.</Typography>
-        </Box>
-        <Box>
-          <TextField sx={{ width: '100%' }} label="책 제목" />
-          <TextField sx={{ width: '100%' }} label="저자" />
-        </Box>
-        <Box>
-          <Typography>독서 상태</Typography>
-          <FormControl>
-            <FormLabel id="demo-row-radio-buttons-group-label">Gender</FormLabel>
-            <RadioGroup
-              row
-              aria-labelledby="demo-row-radio-buttons-group-label"
-              name="row-radio-buttons-group"
-            >
-              <FormControlLabel value="female" control={<Radio />} label="Female" />
-              <FormControlLabel value="male" control={<Radio />} label="Male" />
-              <FormControlLabel value="other" control={<Radio />} label="Other" />
-              <FormControlLabel value="disabled" disabled control={<Radio />} label="other" />
-            </RadioGroup>
-          </FormControl>
-        </Box>
-        <Stack>
-          <Typography>독서 시작일</Typography>
-          <DatePicker />
-          <Typography>독서 종료일</Typography>
-          <DatePicker />
+  const { stepNumber, currentStep, isLoading } = useStepNavigator();
 
+  const methods = useForm<BasicInfoFormValues>({
+    defaultValues: {
+      title: '',
+      author: '',
+      readingStatus: 'WISHLIST',
+      publishedAt: null,
+      readingStartedAt: null,
+      readingFinishedAt: null,
+    },
+    context: { stepNumber },
+    resolver: (values, context, options) => {
+      const { stepNumber } = context;
+      const schema = schemasByStep[context];
+      // 동적 변경
+      return zodResolver(basicInfoSchema)(values, context, options);
+    },
+  });
+
+  const handleSubmit = async data => {
+    console.log(data);
+    // const res = await submit(data);
+  };
+
+  if (isLoading) {
+    return <CenterLoading />;
+  }
+
+  return (
+    <Paper elevation={3} sx={{ p: 3 }}>
+      <RHFProvider methods={methods} onSubmit={handleSubmit}>
+        <Stack gap={3}>
+          <StepHeader currentStep={currentStep.step} />
+
+          <StepSwitcher
+            value={stepNumber}
+            cases={{
+              1: <BasicInfo />,
+              2: <Recommendation />,
+              3: <Review />,
+              4: <Quotation />,
+              5: <SharingOption />,
+            }}
+            fallback={<div>Error!</div>}
+          />
+          <FormAction />
         </Stack>
-        <Stack direction='row' sx={{width: '100%'}}>
-          <Button>이전</Button>
-          <Button>다음 -></Button>
-        </Stack>
-      </Stack>
-    </>
+      </RHFProvider>
+    </Paper>
   );
 }
-
-// 1 단계:
-// 도서 기본 정보 - 이름, 저자, 출판 년,월,일
-// 독서 상태
-// --> 읽고 싶은 책 / 읽는 중 / 읽음 / 보류중
-// --> 독서(할) 시작일, 독서 종료일 (독서 상태에 종속적)

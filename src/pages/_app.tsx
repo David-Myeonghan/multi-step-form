@@ -4,7 +4,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import '@/styles/globals.css';
-import Layout from '@/components/Layout';
+import Layout from '@/steps/Layout';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
