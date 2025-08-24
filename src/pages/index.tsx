@@ -2,8 +2,7 @@ import { Paper, Stack } from '@mui/material';
 import React from 'react';
 import BasicInfo from '@/steps/BasicInfo/BasicInfo';
 import Recommendation from '@/steps/Recommendation';
-import Quotation from '@/steps/Quotation';
-import SharingOption from '@/steps/SharingOption';
+import QuotationSharing from '@/steps/QuotationSharing';
 import useStepNavigator from '@/hooks/useStepNavigator';
 import StepSwitcher from '@/components/StepSwitcher';
 import StepHeader from '@/components/StepHeader';
@@ -31,7 +30,10 @@ export default function Home() {
       readingFinishedAt: null,
       rating: 0,
       review: '',
-      // 다른 step 필드...
+      // last step
+      quotation: '',
+      quotationPage: 0,
+      isPublic: false,
     },
     resolver,
   });
@@ -56,9 +58,7 @@ export default function Home() {
             cases={{
               1: <BasicInfo />,
               2: <Recommendation />, // 2 + 3
-              // 3: <Review />,
-              3: <Quotation />,
-              4: <SharingOption />,
+              3: <QuotationSharing />,
             }}
             fallback={<div>Error!</div>}
           />
