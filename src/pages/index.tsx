@@ -32,7 +32,8 @@ export default function Home() {
       review: '',
       // last step
       quotation: '',
-      quotationPage: 0,
+      quotationPage: 1,
+      totalPage: 1,
       isPublic: false,
     },
     resolver,
@@ -58,7 +59,7 @@ export default function Home() {
             cases={{
               1: <BasicInfo />,
               2: <Recommendation />, // 2 + 3
-              3: <QuotationSharing />,
+              3: <QuotationSharing />, // 4 + 5
             }}
             fallback={<div>Error!</div>}
           />

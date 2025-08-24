@@ -2,8 +2,8 @@ import { z } from 'zod';
 export const quoteSharingSchema = z
   .object({
     quotation: z.string().optional(),
-    quotationPage: z.number().min(1, '1 이상의 페이지 번호를 입력해주세요'),
-    totalPage: z.number().min(1, '1 이상의 페이지 번호를 입력해주세요'),
+    quotationPage: z.coerce.number().min(1, '1 이상의 페이지 번호를 입력해주세요'),
+    totalPage: z.coerce.number().min(1, '1 이상의 페이지 번호를 입력해주세요'),
     isPublic: z.boolean(),
   })
   .refine(
