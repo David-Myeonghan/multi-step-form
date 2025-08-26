@@ -4,7 +4,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 interface RHFRadioProps {
   radioTitle: string;
   name: string;
-  radioGroupList: Array<Record<'label' | 'value', string>>;
+  radioGroupList: Array<Record<'label' | 'value', any>>;
 }
 export default function RHFRadio({ radioTitle, name, radioGroupList }: RHFRadioProps) {
   const {
