@@ -14,7 +14,7 @@ export default function StepHeader({ currentStep }: StepHeaderProps) {
   return (
     <Stack>
       <Typography variant="h5">{title}</Typography>
-      <Typography variant="subtitle1">Step {currentStep} / 5</Typography>
+      <Typography variant="subtitle1">Step {currentStep} / 3</Typography>
       <Typography variant="subtitle1">{description}</Typography>
     </Stack>
   );

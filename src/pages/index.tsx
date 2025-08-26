@@ -21,6 +21,7 @@ export default function Home() {
 
   const methods = useForm<MultiStepFormValues>({
     mode: 'onSubmit',
+    shouldUnregister: false,
     defaultValues: {
       title: '',
       author: '',
@@ -30,7 +31,6 @@ export default function Home() {
       readingFinishedAt: null,
       rating: 0,
       review: '',
-      // last step
       quotation: '',
       quotationPage: 1,
       totalPage: 1,
