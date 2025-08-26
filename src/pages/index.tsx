@@ -13,10 +13,13 @@ import RHFProvider from '@/components/RHF/RHFProvider';
 import { MultiStepFormValues, schemasByStep } from '@/schemas';
 import CenterLoading from '@/components/CenterLoading';
 import { useRouter } from 'next/router';
+import { useAtom } from 'jotai/index';
+import { allFormInfoAtom } from '@/Atom/allFormInfo';
 // 1024px 기준
 
 export default function Home() {
   const router = useRouter();
+  const [_allFormInfoStorage, setAllFormInfoStorage] = useAtom(allFormInfoAtom);
   const { stepNumber, currentStep, isLoading } = useStepNavigator();
 
   const resolver = zodResolver(schemasByStep[stepNumber as keyof typeof schemasByStep] as any);
@@ -44,7 +47,9 @@ export default function Home() {
   const handleSubmit = async (data: MultiStepFormValues) => {
     console.log(data);
     // const res = await submit(data); // POST
-    router.replace('submit/success');
+    await router.replace('submit/success');
+    // if (res.success)
+    setAllFormInfoStorage({});
   };
 
   if (isLoading) {
