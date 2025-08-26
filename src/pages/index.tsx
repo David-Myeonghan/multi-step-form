@@ -12,9 +12,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import RHFProvider from '@/components/RHF/RHFProvider';
 import { MultiStepFormValues, schemasByStep } from '@/schemas';
 import CenterLoading from '@/components/CenterLoading';
+import { useRouter } from 'next/router';
 // 1024px 기준
 
 export default function Home() {
+  const router = useRouter();
   const { stepNumber, currentStep, isLoading } = useStepNavigator();
 
   const resolver = zodResolver(schemasByStep[stepNumber as keyof typeof schemasByStep] as any);
@@ -41,7 +43,8 @@ export default function Home() {
 
   const handleSubmit = async (data: MultiStepFormValues) => {
     console.log(data);
-    // const res = await submit(data);
+    // const res = await submit(data); // POST
+    router.replace('submit/success');
   };
 
   if (isLoading) {
@@ -58,8 +61,8 @@ export default function Home() {
             value={stepNumber}
             cases={{
               1: <BasicInfo />,
-              2: <Recommendation />, // 2 + 3
-              3: <QuotationSharing />, // 4 + 5
+              2: <Recommendation />,
+              3: <QuotationSharing />,
             }}
             fallback={<div>Error!</div>}
           />

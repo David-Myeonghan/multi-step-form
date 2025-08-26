@@ -34,6 +34,7 @@ export default function RatingStar({ ratingValue, onStarClick }: RatingStarProps
           >
             {/*// left*/}
             <button
+              type="button"
               onClick={() => handleStarClick(star, true)}
               onMouseEnter={() => handleStarMouseEnter(star, true)}
               onMouseLeave={handleMouseLeave}
@@ -51,6 +52,7 @@ export default function RatingStar({ ratingValue, onStarClick }: RatingStarProps
 
             {/*// right*/}
             <button
+              type="button"
               onClick={() => handleStarClick(star, false)}
               onMouseEnter={() => handleStarMouseEnter(star, false)}
               onMouseLeave={handleMouseLeave}
