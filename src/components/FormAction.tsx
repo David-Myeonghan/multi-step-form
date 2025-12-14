@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Button, Stack } from '@mui/material';
 import useStepNavigator from '@/hooks/useStepNavigator';
 import CenterLoading from '@/components/CenterLoading';
@@ -8,9 +7,10 @@ import { allFormInfoAtom } from '@/Atom/allFormInfo';
 import { MultiStepFormValues } from '@/schemas';
 
 export default function FormAction() {
-  const { trigger, getValues, reset } = useFormContext();
-  const { isLoading, isFirst, isLast, goPrevious, goNext, stepNumber } = useStepNavigator();
+  const { trigger, getValues } = useFormContext();
+  const { isLoading, isFirst, isLast, goPrevious, goNext } = useStepNavigator();
   const [allFormInfoStorage, setAllFormInfoStorage] = useAtom(allFormInfoAtom);
+  // console.log(allFormInfoStorage);
 
   const handleNextClick = async () => {
     const isValid = await trigger(undefined, { shouldFocus: true });
@@ -29,17 +29,6 @@ export default function FormAction() {
   };
 
   const buttonProps = isLast ? ({ type: 'submit' } as const) : { onClick: handleNextClick };
-
-  // 새로고침시 유지
-  useEffect(() => {
-    if (
-      typeof allFormInfoStorage === 'object' &&
-      allFormInfoStorage !== null &&
-      Object.keys(allFormInfoStorage).length > 0
-    ) {
-      reset(allFormInfoStorage);
-    }
-  }, [stepNumber]);
 
   if (isLoading) {
     return <CenterLoading />;
