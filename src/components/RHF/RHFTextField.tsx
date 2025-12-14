@@ -22,11 +22,12 @@ export default function RHFTextField({
     <Controller
       name={name}
       control={control}
-      render={({ field, fieldState }) => (
+      render={({ field: { ref, ...fieldProps }, fieldState }) => (
         <TextField
           label={label}
-          {...field}
-          inputRef={field.ref}
+          // inputRef와 나머지 props 분리해서 전달해야, focus 같은 fine-grained 설정 가능
+          {...fieldProps}
+          inputRef={ref}
           error={!!fieldState.error}
           helperText={fieldState.error?.message}
           sx={sx}

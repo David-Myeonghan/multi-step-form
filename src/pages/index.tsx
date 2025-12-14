@@ -25,6 +25,7 @@ export default function Home() {
   const { methods, clearStorage } = useFormWithStorage<MultiStepFormValues>(allFormInfoAtom, {
     mode: 'onSubmit',
     shouldUnregister: false,
+    shouldFocusError: true,
     defaultValues: {
       title: '',
       author: '',

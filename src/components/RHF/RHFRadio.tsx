@@ -12,19 +12,29 @@ export default function RHFRadio({ radioTitle, name, radioGroupList }: RHFRadioP
     formState: { errors },
   } = useFormContext();
   return (
-    <FormControl error={!!errors.readingStatus}>
+    <FormControl error={!!errors[name]}>
       <FormLabel id="radio-buttons-reading-status-label">{radioTitle}</FormLabel>
       <Controller
         name={name}
         control={control}
-        render={({ field }) => (
-          <RadioGroup row {...field}>
+        render={({ field: { ref, ...fieldProps } }) => (
+          <RadioGroup row {...fieldProps} ref={ref}>
             {radioGroupList.map(({ label, value }) => (
-              <FormControlLabel key={value} value={value} control={<Radio />} label={label} />
+              <FormControlLabel
+                key={value}
+                value={value}
+                control={<Radio />}
+                label={label}
+              />
             ))}
           </RadioGroup>
         )}
       />
+      {errors[name] && (
+        <span style={{ color: '#d32f2f', fontSize: '0.75rem', marginTop: '3px', marginLeft: '14px' }}>
+          {errors[name]?.message as string}
+        </span>
+      )}
     </FormControl>
   );
 }

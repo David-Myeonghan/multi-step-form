@@ -15,15 +15,16 @@ export default function RHFDatePicker({ name, label, rules, slotProps }: RHFDate
       name={name}
       control={control}
       rules={rules}
-      render={({ field, fieldState }) => (
+      render={({ field: { ref, ...fieldProps }, fieldState }) => (
         <DatePicker
           label={label}
-          {...field}
+          {...fieldProps}
           slotProps={{
             textField: {
               fullWidth: true,
               error: !!fieldState.error,
               helperText: fieldState.error?.message,
+              inputRef: ref,
             },
             ...slotProps,
           }}

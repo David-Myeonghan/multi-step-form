@@ -13,7 +13,8 @@ export default function FormAction() {
   const [allFormInfoStorage, setAllFormInfoStorage] = useAtom(allFormInfoAtom);
 
   const handleNextClick = async () => {
-    const isValid = await trigger();
+    const isValid = await trigger(undefined, { shouldFocus: true });
+
     if (isValid) {
       const currentInfo = getValues();
       setAllFormInfoStorage((prev: Partial<MultiStepFormValues>) => ({ ...prev, ...currentInfo }));
