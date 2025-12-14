@@ -7,24 +7,22 @@ import useStepNavigator from '@/hooks/useStepNavigator';
 import StepSwitcher from '@/components/StepSwitcher';
 import StepHeader from '@/components/StepHeader';
 import FormAction from '@/components/FormAction';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import RHFProvider from '@/components/RHF/RHFProvider';
 import { MultiStepFormValues, schemasByStep } from '@/schemas';
 import CenterLoading from '@/components/CenterLoading';
 import { useRouter } from 'next/router';
-import { useAtom } from 'jotai/index';
 import { allFormInfoAtom } from '@/Atom/allFormInfo';
+import useFormWithStorage from '@/hooks/useFormWithStorage';
 // 1024px 기준
 
 export default function Home() {
   const router = useRouter();
-  const [_allFormInfoStorage, setAllFormInfoStorage] = useAtom(allFormInfoAtom);
   const { stepNumber, currentStep, isLoading } = useStepNavigator();
 
   const resolver = zodResolver(schemasByStep[stepNumber as keyof typeof schemasByStep] as any);
 
-  const methods = useForm<MultiStepFormValues>({
+  const { methods, clearStorage } = useFormWithStorage<MultiStepFormValues>(allFormInfoAtom, {
     mode: 'onSubmit',
     shouldUnregister: false,
     defaultValues: {
@@ -49,7 +47,7 @@ export default function Home() {
     // const res = await submit(data); // POST
     await router.replace('submit/success');
     // if (res.success)
-    setAllFormInfoStorage({});
+    clearStorage();
   };
 
   if (isLoading) {
