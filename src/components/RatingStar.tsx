@@ -1,18 +1,27 @@
 import { Stack, Typography } from '@mui/material';
 import { useState } from 'react';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 interface RatingStarProps {
-  ratingValue: number;
-  onStarClick: (rating: number) => void;
+  name: string;
 }
-export default function RatingStar({ ratingValue, onStarClick }: RatingStarProps) {
+export default function RatingStar({ name }: RatingStarProps) {
+  const {
+    control,
+    setValue,
+    formState: { isReady, errors },
+  } = useFormContext();
+
   const [hoverRating, setHoverRating] = useState<number>(0);
+
+  const ratingValue = useWatch({ control, name });
 
   const handleStarClick = (starValue: number, isHalf: boolean = false) => {
     const newRating = isHalf ? starValue - 0.5 : starValue;
-    onStarClick(newRating);
+    isReady && setValue(name, newRating);
   };
+
   const handleStarMouseEnter = (starValue: number, isHalf: boolean = false) => {
     const newRating = isHalf ? starValue - 0.5 : starValue;
     setHoverRating(newRating);
@@ -32,7 +41,7 @@ export default function RatingStar({ ratingValue, onStarClick }: RatingStarProps
             alignItems="center"
             sx={{ position: 'relative' }}
           >
-            {/*// left*/}
+            {/* left star */}
             <button
               type="button"
               onClick={() => handleStarClick(star, true)}
@@ -50,7 +59,7 @@ export default function RatingStar({ ratingValue, onStarClick }: RatingStarProps
             />
             <StarBorderIcon fontSize="large" color="disabled" />
 
-            {/*// right*/}
+            {/* right star */}
             <button
               type="button"
               onClick={() => handleStarClick(star, false)}
@@ -69,7 +78,14 @@ export default function RatingStar({ ratingValue, onStarClick }: RatingStarProps
           </Stack>
         ))}
       </Stack>
-      <Typography>{hoverRating || ratingValue} / 5</Typography>
+      <Typography color={errors[name] && '#d32f2f'}>{hoverRating || ratingValue} / 5</Typography>
+      {errors[name] && (
+        <span
+          style={{ color: '#d32f2f', fontSize: '0.75rem', marginTop: '3px', marginLeft: '14px' }}
+        >
+          {errors[name]?.message as string}
+        </span>
+      )}
     </Stack>
   );
 }

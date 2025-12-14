@@ -9,16 +9,12 @@ export default function Recommendation() {
     setValue,
     formState: { isReady, errors },
   } = useFormContext();
-  const ratingValue = useWatch({ control, name: 'rating' });
-  const handleStarClick = (rating: number) => {
-    isReady && setValue('rating', rating);
-  };
 
   return (
     <Stack gap={3}>
       <Stack gap={1} alignItems="center">
         <Typography>별점을 선택해주세요.</Typography>
-        <RatingStar ratingValue={ratingValue} onStarClick={handleStarClick} />
+        <RatingStar name="rating" />
       </Stack>
 
       <Stack>
