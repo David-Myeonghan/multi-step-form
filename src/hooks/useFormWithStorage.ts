@@ -1,39 +1,39 @@
-import { allFormInfoAtom } from '@/Atom/allFormInfo';
-import { MultiStepFormValues, schemasByStep } from '@/schemas';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useAtom } from 'jotai';
-import { useRouter } from 'next/router';
-import { useForm } from 'react-hook-form';
+import { useSetAtom, useStore, WritableAtom } from 'jotai';
+import { useForm, UseFormProps, FieldValues } from 'react-hook-form';
+import { useEffect } from 'react';
 
-export default function useFormWithStorage() {
-  const router = useRouter();
-  const [_allFormInfoStorage, setAllFormInfoStorage] = useAtom(allFormInfoAtom);
+// 하나의 관심사: 폼과 Storage 동기화 매커니즘, '무엇을 동기화할지'는 외부에서 결정
+export default function useFormWithStorage<T extends FieldValues>(
+  storageAtom: WritableAtom<Partial<T>, [Partial<T>], void>,
+  options?: UseFormProps<T>,
+) {
+  const store = useStore();
+  const storedValues = store.get(storageAtom); // 구독 없이 한 번만 읽기
+  const setStoredValues = useSetAtom(storageAtom); // 쓰기 전용 (리렌더링 안 함)
 
-  const resolver = zodResolver(schemasByStep[stepNumber as keyof typeof schemasByStep] as any);
-
-  const methods = useForm<MultiStepFormValues>({
-    mode: 'onSubmit',
-    shouldUnregister: false,
+  // atom 값과 defaultValues 병합
+  const methods = useForm<T>({
+    ...options,
     defaultValues: {
-      title: '',
-      author: '',
-      readingStatus: 'WISHLIST',
-      publishedAt: null,
-      readingStartedAt: null,
-      readingFinishedAt: null,
-      rating: 0,
-      review: '',
-      quotation: '',
-      quotationPage: 1,
-      totalPage: 1,
-      isPublic: false,
-    },
-    resolver,
+      ...options?.defaultValues,
+      ...storedValues,
+    } as any,
   });
 
-  const clearStorage = () => {
-    setAllFormInfoStorage({});
-  };
+  // 폼 값 변경 감지 → atom에 자동 저장 (리렌더링 없이)
+  // subscribe 사용으로 리렌더링 없이 값 감지
+  useEffect(() => {
+    const unsubscribe = methods.subscribe({
+      formState: { values: true },
+      callback: ({ values }) => {
+        setStoredValues(values as Partial<T>);
+      },
+    });
+    return unsubscribe;
+  }, [methods.subscribe, setStoredValues]);
 
-  return { clearStorage };
+  // 제출 완료시 storage 비우는 함수
+  const clearStorage = () => setStoredValues({});
+
+  return { methods, clearStorage };
 }
