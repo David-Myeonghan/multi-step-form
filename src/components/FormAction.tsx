@@ -29,6 +29,7 @@ export default function FormAction() {
 
   const buttonProps = isLast ? ({ type: 'submit' } as const) : { onClick: handleNextClick };
 
+  // 새로고침시 유지
   useEffect(() => {
     if (
       typeof allFormInfoStorage === 'object' &&
